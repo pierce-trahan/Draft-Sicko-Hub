@@ -140,13 +140,15 @@ This is **data-derived, not hand-authored.** An **agent pulls draft history from
 
 ---
 
-## 9. Build Workflow — Claude ↔ Gemini
+## 9. Build Workflow — three roles
 
-Explicit division of labor so handoffs are clean:
+A three-tier pipeline. Full detail + **paste-ready system instructions** live in [`docs/workflow/`](workflow/README.md).
 
-- **Claude = design & audit.** Specs (like this doc), architecture decisions, pressure-testing ideas, catching what "doesn't click," reviewing Gemini's output. Claude writes the *what* and *why*.
-- **Gemini (Google AI Studio) = engineer.** Implements against these specs; handles the build-out and publishing path.
-- **Handoff format:** each feature gets a spec section here (intent → mechanic → data model → open decisions) precise enough for Gemini to build without re-litigating the vision.
+- **Claude = Audit & Designer.** Specs (this doc + `docs/specs/*`), architecture decisions, pressure-testing, catching what "doesn't click," reviewing output. Writes the *what* and *why*.
+- **Gemini 3.6 (regular AI Studio chat) = Platform Engineer.** Large token budget; implements specs into complete, **tested** code and logic. Builds and verifies. → [`docs/workflow/gemini-3.6-platform-engineer.md`](workflow/gemini-3.6-platform-engineer.md)
+- **AI Studio app-build environment = Implementation Engineer / orchestrator.** Assembles the tested code into the runnable, publishable product; integration, config, deploy readiness. → [`docs/workflow/aistudio-implementation-engineer.md`](workflow/aistudio-implementation-engineer.md)
+
+**Flow:** design → build & test → integrate & ship → review. Problems flow back one step (integration issues → platform engineer; product ambiguity → designer). **Handoff format:** each feature gets a spec in `docs/specs/NN-*.md` (intent → mechanic → data model → acceptance criteria → out-of-scope), precise enough to build without re-litigating the vision.
 
 ---
 
@@ -159,7 +161,7 @@ Ordered to lock the spine before adding surface area.
 - [x] Standardize name → Sicko's Draft Hub (§4).
 - [x] Resolve the flagship + GM-pipeline decisions (§6, §7).
 
-**Phase 1 — Fix the flagship**
+**Phase 1 — Fix the flagship** → spec ready: [`docs/specs/01-elo-preference-engine.md`](specs/01-elo-preference-engine.md)
 - [ ] Rebuild Scouting Matrix as the Pairwise Elo Preference Engine (§6).
 - [ ] Add the gut-vs-grades comparison view (the core learning payoff).
 
