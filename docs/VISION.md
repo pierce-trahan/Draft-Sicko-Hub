@@ -162,9 +162,9 @@ Ordered to lock the spine before adding surface area.
 - [x] Standardize name → Sicko's Draft Hub (§4).
 - [x] Resolve the flagship + GM-pipeline decisions (§6, §7).
 
-**Phase 1 — Fix the flagship** → spec ready: [`docs/specs/01-elo-preference-engine.md`](specs/01-elo-preference-engine.md)
-- [ ] Rebuild Scouting Matrix as the Pairwise Elo Preference Engine (§6).
-- [ ] Add the gut-vs-grades comparison view (the core learning payoff).
+**Phase 1 — Fix the flagship** ✅ **Landed** → [`docs/specs/01-elo-preference-engine.md`](specs/01-elo-preference-engine.md)
+- [x] Rebuild Scouting Matrix as the Pairwise Elo Preference Engine (§6).
+- [x] Add the gut-vs-grades comparison view (the core learning payoff).
 
 **Phase 2 — Depth on evaluation**
 - [ ] Position-aware trait model (per-position traits + weighting, richer radar) → [`docs/specs/03`](specs/03-position-aware-trait-model.md). Also aligns Comparer + Player Profile.

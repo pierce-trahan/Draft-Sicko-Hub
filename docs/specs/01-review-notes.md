@@ -1,7 +1,9 @@
 # Spec 01 — Build Review & Fix List
 
 > **Reviewer:** Claude (design/audit). **Build:** Gemini 3.6 first pass of the Pairwise Elo Preference Engine.
-> **Verdict:** Core engine is excellent; **revise before merge** — 3 blockers, 1 significant, 2 minor, all in the *integration layer* (not the Elo math).
+> **RESOLVED — Spec 01 LANDED.** All blockers/significant/minors below were fixed in the revision; a further commit-fallback fix (grade-sorted base order) and the `getDraftRange` extraction were applied on landing. Verified: `tsc --noEmit` clean + `vite build`/esbuild bundle succeed. Kept as the audit record.
+>
+> **Original verdict:** Core engine is excellent; **revise before merge** — 3 blockers, 1 significant, 2 minor, all in the *integration layer* (not the Elo math).
 > **How to use:** items 2–4 + minors → hand to **Gemini** (platform engineer). Item 1 (the surgical `App.tsx` edit) → **AI Studio implementation engineer**, applied exactly as written here — do **not** use Gemini's proposed `App.tsx` rewrite.
 
 ---

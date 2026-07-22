@@ -6,7 +6,7 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 
 | # | Spec | Phase | Depends on | Status |
 |---|---|---|---|---|
-| 01 | [Pairwise Elo Preference Engine](01-elo-preference-engine.md) | 1 | — | ✅ Spec ready |
+| 01 | [Pairwise Elo Preference Engine](01-elo-preference-engine.md) | 1 | — | ✅ **Landed** (built, reviewed, fixed, verified — tsc + build green) · [review](01-review-notes.md) |
 | 02 | [GM Profiles + PFR Pipeline](02-gm-profiles-pipeline.md) | 3 | — (parallel) | ✅ Spec ready — all open items (G-1/2/3) resolved |
 | 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ Spec ready (T-1 = trait-list content authoring) |
 | 04 | [Positional Usage & Projection](04-positional-usage-projection.md) | 2 | **03** | ✅ Spec ready (U-1 = role-catalog content authoring) |
