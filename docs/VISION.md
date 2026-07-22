@@ -167,9 +167,8 @@ Ordered to lock the spine before adding surface area.
 - [ ] Add the gut-vs-grades comparison view (the core learning payoff).
 
 **Phase 2 — Depth on evaluation**
-- [ ] Position-aware trait model (per-position traits + weighting, richer radar).
-- [ ] Align Prospect Comparer + Player Profile to the new trait model.
-- [ ] **Positional Usage & Projection** *(future spec)* — for tweener/`FLEX` prospects, break down avenues of usage and give a predictive best-scheme / best-formation-spot projection in the player profile. Depends on the trait model + `SCHEMES` data.
+- [ ] Position-aware trait model (per-position traits + weighting, richer radar) → spec ready: [`docs/specs/03-position-aware-trait-model.md`](specs/03-position-aware-trait-model.md). Also aligns Comparer + Player Profile.
+- [ ] **Positional Usage & Projection** → spec ready: [`docs/specs/04-positional-usage-projection.md`](specs/04-positional-usage-projection.md) — avenues of usage + predictive best-scheme/formation-spot for tweener/`FLEX` prospects. Depends on Spec 03 + `SCHEMES` data.
 
 **Phase 3 — GM intelligence** → spec ready: [`docs/specs/02-gm-profiles-pipeline.md`](specs/02-gm-profiles-pipeline.md)
 - [ ] Build the Pro Football Reference draft-history pipeline (§7) — prove on a 2–3 GM subset first.
