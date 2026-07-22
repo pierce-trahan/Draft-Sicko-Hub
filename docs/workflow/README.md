@@ -38,4 +38,9 @@ Three roles, one pipeline. Each role has a lane; work flows left to right, and p
 
 - Platform Engineer → [`gemini-3.6-platform-engineer.md`](gemini-3.6-platform-engineer.md)
 - Implementation Engineer → [`aistudio-implementation-engineer.md`](aistudio-implementation-engineer.md)
+
+## Runbooks
+
+- Sync the AI Studio app-build env from the repo (re-run after each spec lands) → [`sync-from-repo.md`](sync-from-repo.md)
+- Desk/next-actions checklist → [`next-actions.md`](next-actions.md)
 </content>
