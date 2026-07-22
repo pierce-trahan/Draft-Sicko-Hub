@@ -169,9 +169,9 @@ Ordered to lock the spine before adding surface area.
 - [ ] Position-aware trait model (per-position traits + weighting, richer radar).
 - [ ] Align Prospect Comparer + Player Profile to the new trait model.
 
-**Phase 3 — GM intelligence**
-- [ ] Build the Pro Football Reference draft-history pipeline (§7).
-- [ ] Ship GM Profile views.
+**Phase 3 — GM intelligence** → spec ready: [`docs/specs/02-gm-profiles-pipeline.md`](specs/02-gm-profiles-pipeline.md)
+- [ ] Build the Pro Football Reference draft-history pipeline (§7) — prove on a 2–3 GM subset first.
+- [ ] Ship GM Profile views (position-by-round, allocation, capital, college/conference lean).
 - [ ] (Optional) wire GM tendencies into the Draft Simulator as AI-GM behavior.
 
 **Phase 4 — Polish & publish**
@@ -196,6 +196,9 @@ Track unresolved calls here so they don't get lost between sessions.
 | 6 | Keep a visible version badge? | Open | Currently `V2.4` |
 | 7 | Confirm Big Board Lab feature details | Open | Verify once logged in on Chrome |
 | 8 | Naming standardization | ✅ **Done** | Applied across codebase (§4) |
+| G-1 | GM scraping approach / PFR ToS | **Open** | Confirm before scaling past subset (Spec 02) |
+| G-2 | GM subset choice (which 2–3 GMs) | **Open** | Prefer clean single-team multi-year tenures (Spec 02) |
+| G-3 | EDGE vs. LB position-normalization rule | **Open** | Lock deterministic mapping (Spec 02) |
 
 ---
 
