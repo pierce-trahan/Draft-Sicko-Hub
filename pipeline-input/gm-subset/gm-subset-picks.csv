@@ -1,0 +1,255 @@
+gm,team,year,round,overall_pick,player,pos_raw,pos_group,college,pfr_id
+Howie Roseman,PHI,2010,1,13,Brandon Graham,DE,EDGE,Michigan,GrahBr99
+Howie Roseman,PHI,2010,2,37,Nate Allen,DB,FLEX,South Florida,AlleNa99
+Howie Roseman,PHI,2010,3,86,Daniel Te'o-Nesheim,DE,EDGE,Washington,Teo-Da99
+Howie Roseman,PHI,2010,4,105,Trevard Lindley,DB,FLEX,Kentucky,LindTr99
+Howie Roseman,PHI,2010,4,121,Keenan Clayton,LB,LB,Oklahoma,ClayKe99
+Howie Roseman,PHI,2010,4,122,Mike Kafka,QB,QB,Northwestern,KafkMi00
+Howie Roseman,PHI,2010,4,125,Clay Harbor,TE,TE,Missouri State,HarbCl00
+Howie Roseman,PHI,2010,5,134,Ricky Sapp,DE,EDGE,Clemson,SappRi99
+Howie Roseman,PHI,2010,5,159,Riley Cooper,WR,WR,Florida,CoopRi00
+Howie Roseman,PHI,2010,6,200,Charles Scott,RB,RB,LSU,-9999
+Howie Roseman,PHI,2010,7,220,Jamar Chaney,LB,LB,Mississippi St.,ChanJa98
+Howie Roseman,PHI,2010,7,243,Jeff Owens,DT,DT,Georgia,OwenJe20
+Howie Roseman,PHI,2010,7,244,Kurt Coleman,DB,FLEX,Ohio St.,ColeKu99
+Howie Roseman,PHI,2011,1,23,Danny Watkins,G,IOL,Baylor,WatkDa00
+Howie Roseman,PHI,2011,2,54,Jaiquawn Jarrett,DB,FLEX,Temple,JarrJa00
+Howie Roseman,PHI,2011,3,90,Curtis Marsh,DB,FLEX,Utah St.,MarsCu01
+Howie Roseman,PHI,2011,4,116,Casey Matthews,LB,LB,Oregon,MattCa00
+Howie Roseman,PHI,2011,4,120,Alex Henery,K,K,Nebraska,HeneAl00
+Howie Roseman,PHI,2011,5,149,Dion Lewis,RB,RB,Pittsburgh,LewiDi00
+Howie Roseman,PHI,2011,5,161,Julian Vandervelde,G,IOL,Iowa,VandJu00
+Howie Roseman,PHI,2011,6,191,Jason Kelce,C,IOL,Cincinnati,KelcJa00
+Howie Roseman,PHI,2011,6,193,Brian Rolle,LB,LB,Ohio St.,RollBr00
+Howie Roseman,PHI,2011,7,237,Greg Lloyd,LB,LB,Connecticut,LloyGr01
+Howie Roseman,PHI,2011,7,240,Stanley Havili,RB,RB,USC,HaviSt00
+Howie Roseman,PHI,2012,1,12,Fletcher Cox,DT,DT,Mississippi St.,CoxxFl00
+Howie Roseman,PHI,2012,2,46,Mychal Kendricks,LB,LB,California,KendMy00
+Howie Roseman,PHI,2012,2,59,Vinny Curry,DE,EDGE,Marshall,CurrVi00
+Howie Roseman,PHI,2012,3,88,Nick Foles,QB,QB,Arizona,FoleNi00
+Howie Roseman,PHI,2012,4,123,Brandon Boykin,DB,FLEX,Georgia,BoykBr00
+Howie Roseman,PHI,2012,5,153,Dennis Kelly,T,OT,Purdue,KellDe00
+Howie Roseman,PHI,2012,6,194,Marvin McNutt,WR,WR,Iowa,McNuMa00
+Howie Roseman,PHI,2012,6,200,Brandon Washington,G,IOL,Miami (FL),WashBr00
+Howie Roseman,PHI,2012,7,229,Bryce Brown,RB,RB,Kansas St.,BrowBr02
+Howie Roseman,PHI,2013,1,4,Lane Johnson,T,OT,Oklahoma,JohnLa01
+Howie Roseman,PHI,2013,2,35,Zach Ertz,TE,TE,Stanford,ErtzZa00
+Howie Roseman,PHI,2013,3,67,Bennie Logan,DT,DT,LSU,LogaBe00
+Howie Roseman,PHI,2013,4,98,Matt Barkley,QB,QB,USC,BarkMa00
+Howie Roseman,PHI,2013,5,136,Earl Wolff,DB,FLEX,North Carolina St.,WolfEa00
+Howie Roseman,PHI,2013,7,212,Joe Kruger,DE,EDGE,Utah,KrugJo00
+Howie Roseman,PHI,2013,7,218,Jordan Poyer,DB,FLEX,Oregon St.,PoyeJo00
+Howie Roseman,PHI,2013,7,239,David King,DE,EDGE,Oklahoma,KingDa00
+Howie Roseman,PHI,2014,1,26,Marcus Smith,LB,LB,Louisville,SmitMa03
+Howie Roseman,PHI,2014,2,42,Jordan Matthews,WR,WR,Vanderbilt,MattJo00
+Howie Roseman,PHI,2014,3,86,Josh Huff,WR,WR,Oregon,HuffJo00
+Howie Roseman,PHI,2014,4,101,Jaylen Watkins,DB,FLEX,Florida,WatkJa01
+Howie Roseman,PHI,2014,5,141,Taylor Hart,DE,EDGE,Oregon,HartTa00
+Howie Roseman,PHI,2014,5,162,Ed Reynolds,DB,FLEX,Stanford,ReynEd00
+Howie Roseman,PHI,2014,7,224,Beau Allen,DT,DT,Wisconsin,AlleBe00
+Howie Roseman,PHI,2016,1,2,Carson Wentz,QB,QB,North Dakota St.,WentCa00
+Howie Roseman,PHI,2016,3,79,Isaac Seumalo,G,IOL,Oregon St.,SeumIs00
+Howie Roseman,PHI,2016,5,153,Wendell Smallwood,RB,RB,West Virginia,SmalWe00
+Howie Roseman,PHI,2016,5,164,Halapoulivaati Vaitai,T,OT,TCU,VaitHa00
+Howie Roseman,PHI,2016,6,196,Blake Countess,CB,CB,Auburn,CounBl00
+Howie Roseman,PHI,2016,7,233,Jalen Mills,S,S,LSU,MillJa02
+Howie Roseman,PHI,2016,7,240,Alex McCalister,DE,EDGE,Florida,McCaAl00
+Howie Roseman,PHI,2016,7,251,Joe Walker,ILB,LB,Oregon,WalkJo01
+Howie Roseman,PHI,2017,1,14,Derek Barnett,DE,EDGE,Tennessee,BarnDe01
+Howie Roseman,PHI,2017,2,43,Sidney Jones,CB,CB,Washington,JoneSi00
+Howie Roseman,PHI,2017,3,99,Rasul Douglas,CB,CB,West Virginia,DougRa00
+Howie Roseman,PHI,2017,4,118,Mack Hollins,WR,WR,North Carolina,HollMa00
+Howie Roseman,PHI,2017,4,132,Donnel Pumphrey,RB,RB,San Diego St.,PumpDo00
+Howie Roseman,PHI,2017,5,166,Shelton Gibson,WR,WR,West Virginia,GibsSh00
+Howie Roseman,PHI,2017,5,184,Nathan Gerry,S,S,Nebraska,GerrNa00
+Howie Roseman,PHI,2017,6,214,Elijah Qualls,DT,DT,Washington,QualEl00
+Howie Roseman,PHI,2018,2,49,Dallas Goedert,TE,TE,South Dakota St.,GoedDa00
+Howie Roseman,PHI,2018,4,125,Avonte Maddox,CB,CB,Pittsburgh,MaddAv00
+Howie Roseman,PHI,2018,4,130,Josh Sweat,DE,EDGE,Florida St.,SweaJo00
+Howie Roseman,PHI,2018,6,206,Matt Pryor,T,OT,TCU,PryoMa00
+Howie Roseman,PHI,2018,7,233,Jordan Mailata,T,OT,,MailJo00
+Howie Roseman,PHI,2019,1,22,Andre Dillard,T,OT,Washington St.,DillAn00
+Howie Roseman,PHI,2019,2,53,Miles Sanders,RB,RB,Penn St.,SandMi01
+Howie Roseman,PHI,2019,2,57,JJ Arcega-Whiteside,WR,WR,Stanford,ArceJJ00
+Howie Roseman,PHI,2019,4,138,Shareef Miller,DE,EDGE,Penn St.,MillSh00
+Howie Roseman,PHI,2019,5,167,Clayton Thorson,QB,QB,Northwestern,ThorCl00
+Howie Roseman,PHI,2020,1,21,Jalen Reagor,WR,WR,TCU,ReagJa00
+Howie Roseman,PHI,2020,2,53,Jalen Hurts,QB,QB,Oklahoma,HurtJa00
+Howie Roseman,PHI,2020,3,103,Davion Taylor,LB,LB,Colorado,TaylDa01
+Howie Roseman,PHI,2020,4,127,K'Von Wallace,S,S,Clemson,WallKV00
+Howie Roseman,PHI,2020,4,145,Jack Driscoll,G,IOL,Auburn,DrisJa00
+Howie Roseman,PHI,2020,5,168,John Hightower,WR,WR,Boise St.,HighJo00
+Howie Roseman,PHI,2020,6,196,Shaun Bradley,LB,LB,Temple,BradSh00
+Howie Roseman,PHI,2020,6,200,Quez Watkins,WR,WR,Southern Miss,WatkQu00
+Howie Roseman,PHI,2020,6,210,Prince Tega Wanogho,T,OT,Auburn,WanoTe00
+Howie Roseman,PHI,2020,7,233,Casey Toohill,DE,EDGE,Stanford,ToohCa00
+Howie Roseman,PHI,2021,1,10,DeVonta Smith,WR,WR,Alabama,SmitDe07
+Howie Roseman,PHI,2021,2,37,Landon Dickerson,OL,IOL,Alabama,DickLa00
+Howie Roseman,PHI,2021,3,73,Milton Williams,DL,DT,Louisiana Tech,WillMi08
+Howie Roseman,PHI,2021,4,123,Zech McPhearson,DB,FLEX,Texas Tech,McPhZe00
+Howie Roseman,PHI,2021,5,150,Kenneth Gainwell,RB,RB,Memphis,GainKe00
+Howie Roseman,PHI,2021,6,189,Marlon Tuipulotu,DL,DT,USC,TuipMa00
+Howie Roseman,PHI,2021,6,191,Tarron Jackson,DE,EDGE,Coastal Carolina,JackTa02
+Howie Roseman,PHI,2021,6,224,JaCoby Stevens,S,S,LSU,StevJa00
+Howie Roseman,PHI,2021,7,234,Patrick Johnson,DE,EDGE,Tulane,JohnPa02
+Howie Roseman,PHI,2022,1,13,Jordan Davis,DT,DT,Georgia,DaviJo03
+Howie Roseman,PHI,2022,2,51,Cam Jurgens,OL,IOL,Nebraska,JurgCa01
+Howie Roseman,PHI,2022,3,83,Nakobe Dean,LB,LB,Georgia,DeanNa00
+Howie Roseman,PHI,2022,6,181,Kyron Johnson,DE,EDGE,Kansas,JohnKy02
+Howie Roseman,PHI,2022,6,198,Grant Calcaterra,TE,TE,SMU,CalcGr00
+Howie Roseman,PHI,2023,1,9,Jalen Carter,DL,DT,Georgia,CartJa05
+Howie Roseman,PHI,2023,1,30,Nolan Smith,OLB,FLEX,Georgia,SmitNo02
+Howie Roseman,PHI,2023,3,65,Tyler Steen,OL,IOL,Alabama,SteeTy00
+Howie Roseman,PHI,2023,3,66,Sydney Brown,DB,FLEX,Illinois,BrowSy00
+Howie Roseman,PHI,2023,4,105,Kelee Ringo,DB,FLEX,Georgia,RingKe00
+Howie Roseman,PHI,2023,6,188,Tanner McKee,QB,QB,Stanford,McKeTa01
+Howie Roseman,PHI,2023,7,249,Moro Ojomo,DE,EDGE,Texas,OjomMo00
+Howie Roseman,PHI,2024,1,22,Quinyon Mitchell,CB,CB,Toledo,MitcQu00
+Howie Roseman,PHI,2024,2,40,Cooper DeJean,DB,FLEX,Iowa,DeJeCo00
+Howie Roseman,PHI,2024,3,94,Jalyx Hunt,DE,EDGE,Houston Christian,HuntJa02
+Howie Roseman,PHI,2024,4,127,Will Shipley,RB,RB,Clemson,ShipWi00
+Howie Roseman,PHI,2024,5,152,Ainias Smith,WR,WR,Texas A&M,SmitAi00
+Howie Roseman,PHI,2024,5,155,Jeremiah Trotter Jr.,LB,LB,Clemson,TrotJe01
+Howie Roseman,PHI,2024,5,172,Trevor Keegan,OL,IOL,Michigan,KeegTr00
+Howie Roseman,PHI,2024,6,185,Johnny Wilson,WR,WR,Florida St.,WilsJo03
+Howie Roseman,PHI,2024,6,190,Dylan McMahon,OL,IOL,North Carolina St.,McMaDy00
+Howie Roseman,PHI,2025,1,31,Jihaad Campbell,LB,LB,Alabama,CampJi00
+Howie Roseman,PHI,2025,2,64,Andrew Mukuba,SAF,S,Texas,MukuAn00
+Howie Roseman,PHI,2025,4,111,Ty Robinson,DT,DT,Nebraska,RobiTy02
+Howie Roseman,PHI,2025,5,145,Mac McWilliams,CB,CB,Central Florida,McWiMa01
+Howie Roseman,PHI,2025,5,161,Smael Mondon,LB,LB,Georgia,MondSm01
+Howie Roseman,PHI,2025,5,168,Drew Kendall,C,IOL,Boston Col.,KendDr00
+Howie Roseman,PHI,2025,6,181,Kyle McCord,QB,QB,Syracuse,McCoKy00
+Howie Roseman,PHI,2025,6,191,Myles Hinton,OT,OT,Michigan,HintMy00
+Howie Roseman,PHI,2025,6,207,Cameron Williams,OL,IOL,Texas,WillCa04
+Howie Roseman,PHI,2025,6,209,Antwaun Powell-Ryland,DE,EDGE,Virginia Tech,PoweAn00
+Joe Schoen,NYG,2022,1,5,Kayvon Thibodeaux,DE,EDGE,Oregon,ThibKa00
+Joe Schoen,NYG,2022,1,7,Evan Neal,OL,IOL,Alabama,NealEv00
+Joe Schoen,NYG,2022,2,43,Wan'Dale Robinson,WR,WR,Kentucky,RobiWa01
+Joe Schoen,NYG,2022,3,67,Joshua Ezeudu,OL,IOL,North Carolina,EzeuJo00
+Joe Schoen,NYG,2022,3,81,Cordale Flott,CB,CB,LSU,FlotCo00
+Joe Schoen,NYG,2022,4,112,Daniel Bellinger,TE,TE,San Diego St.,BellDa00
+Joe Schoen,NYG,2022,4,114,Dane Belton,DB,FLEX,Iowa,BeltDa00
+Joe Schoen,NYG,2022,5,146,Micah McFadden,LB,LB,Indiana,McFaMi01
+Joe Schoen,NYG,2022,5,147,DJ Davidson,DT,DT,Arizona St.,DaviDJ00
+Joe Schoen,NYG,2022,5,173,Marcus McKethan,OL,IOL,North Carolina,McKeMa01
+Joe Schoen,NYG,2022,6,182,Darrian Beavers,LB,LB,Cincinnati,BeavDa00
+Joe Schoen,NYG,2023,1,24,Deonte Banks,DB,FLEX,Maryland,BankDe00
+Joe Schoen,NYG,2023,2,57,John Michael Schmitz,OL,IOL,Minnesota,MichJo00
+Joe Schoen,NYG,2023,3,73,Jalin Hyatt,WR,WR,Tennessee,HyatJa00
+Joe Schoen,NYG,2023,5,172,Eric Gray,RB,RB,Oklahoma,GrayEr01
+Joe Schoen,NYG,2023,6,209,Tre Hawkins,CB,CB,Old Dominion,HawkTr00
+Joe Schoen,NYG,2023,7,243,Jordon Riley,DL,DT,Oregon,RileJo00
+Joe Schoen,NYG,2023,7,254,Gervarrius Owens,DB,FLEX,Houston,OwenGe00
+Joe Schoen,NYG,2024,1,6,Malik Nabers,WR,WR,LSU,NabeMa00
+Joe Schoen,NYG,2024,2,47,Tyler Nubin,DB,FLEX,Minnesota,NubiTy00
+Joe Schoen,NYG,2024,3,70,Andru Phillips,DB,FLEX,Kentucky,PhilAn02
+Joe Schoen,NYG,2024,4,107,Theo Johnson,TE,TE,Penn St.,JohnTh00
+Joe Schoen,NYG,2024,5,166,Tyrone Tracy Jr.,RB,RB,Purdue,TracTy00
+Joe Schoen,NYG,2024,6,183,Darius Muasau,LB,LB,UCLA,MuasDa00
+Joe Schoen,NYG,2025,1,3,Abdul Carter,DE,EDGE,Penn St.,CartAb00
+Joe Schoen,NYG,2025,1,25,Jaxson Dart,QB,QB,Mississippi,DartJa00
+Joe Schoen,NYG,2025,3,65,Darius Alexander,DT,DT,Toledo,AlexDa01
+Joe Schoen,NYG,2025,4,105,Cam Skattebo,RB,RB,Arizona St.,SkatCa00
+Joe Schoen,NYG,2025,5,154,Marcus Mbow,OL,IOL,Purdue,MbowMa00
+Joe Schoen,NYG,2025,7,219,Thomas Fidone,TE,TE,Nebraska,FidoTh00
+Joe Schoen,NYG,2025,7,246,Korie Black,CB,CB,Oklahoma St.,BlacKo00
+Trent Baalke,JAX,2021,1,1,Trevor Lawrence,QB,QB,Clemson,LawrTr00
+Trent Baalke,JAX,2021,1,25,Travis Etienne,RB,RB,Clemson,EtieTr00
+Trent Baalke,JAX,2021,2,33,Tyson Campbell,DB,FLEX,Georgia,CampTy01
+Trent Baalke,JAX,2021,2,45,Walker Little,T,OT,Stanford,LittWa00
+Trent Baalke,JAX,2021,3,65,Andre Cisco,DB,FLEX,Syracuse,CiscAn00
+Trent Baalke,JAX,2021,4,106,Jay Tufele,DL,DT,USC,TufeJa00
+Trent Baalke,JAX,2021,4,121,Jordan Smith,OLB,FLEX,Ala-Birmingham,SmitJo03
+Trent Baalke,JAX,2021,5,145,Luke Farrell,TE,TE,Ohio St.,FarrLu00
+Trent Baalke,JAX,2021,6,209,Jalen Camp,WR,WR,Georgia Tech,CampJa03
+Trent Baalke,JAX,2022,1,1,Travon Walker,DE,EDGE,Georgia,WalkTr03
+Trent Baalke,JAX,2022,1,27,Devin Lloyd,LB,LB,Utah,LloyDe00
+Trent Baalke,JAX,2022,3,65,Luke Fortner,G,IOL,Kentucky,FortLu01
+Trent Baalke,JAX,2022,3,70,Chad Muma,LB,LB,Wyoming,MumaCh00
+Trent Baalke,JAX,2022,5,154,Snoop Conner,RB,RB,Mississippi,ConnSn00
+Trent Baalke,JAX,2022,6,197,Gregory Junior,CB,CB,Ouachita Baptist,JuniGr00
+Trent Baalke,JAX,2022,7,222,Montaric Brown,DB,FLEX,Arkansas,BrowMo00
+Trent Baalke,JAX,2023,1,27,Anton Harrison,OL,IOL,Oklahoma,HarrAn00
+Trent Baalke,JAX,2023,2,61,Brenton Strange,TE,TE,Penn St.,StraBr00
+Trent Baalke,JAX,2023,3,88,Tank Bigsby,RB,RB,Auburn,BigsTa00
+Trent Baalke,JAX,2023,4,121,Ventrell Miller,LB,LB,Florida,MillVe00
+Trent Baalke,JAX,2023,4,130,Tyler Lacy,DE,EDGE,Oklahoma St.,LacyTy00
+Trent Baalke,JAX,2023,5,136,Yasir Abdullah,LB,LB,Louisville,AbduYa00
+Trent Baalke,JAX,2023,5,160,Antonio Johnson,DB,FLEX,Texas A&M,JohnAn07
+Trent Baalke,JAX,2023,6,185,Parker Washington,WR,WR,Penn St.,WashPa01
+Trent Baalke,JAX,2023,6,202,Christian Braswell,DB,FLEX,Rutgers,BrasCh00
+Trent Baalke,JAX,2023,6,208,Erick Hallett,DB,FLEX,Pittsburgh,HallEr00
+Trent Baalke,JAX,2023,7,226,Cooper Hodges,OL,IOL,Appalachian St.,HodgCo00
+Trent Baalke,JAX,2023,7,227,Raymond Vohasek,DT,DT,North Carolina,VohaRa00
+Trent Baalke,JAX,2023,7,240,Derek Parish,DL,DT,Houston,PariDe00
+Trent Baalke,JAX,2024,1,23,Brian Thomas,WR,WR,LSU,ThomBr06
+Trent Baalke,JAX,2024,2,48,Maason Smith,DT,DT,LSU,SmitMa07
+Trent Baalke,JAX,2024,3,96,Jarrian Jones,DB,FLEX,Florida St.,JoneJa14
+Trent Baalke,JAX,2024,4,114,Javon Foster,OL,IOL,Missouri,FostJa01
+Trent Baalke,JAX,2024,4,116,Jordan Jefferson,DT,DT,LSU,JeffJo01
+Trent Baalke,JAX,2024,5,153,Deantre Prince,CB,CB,Mississippi,PrinDe01
+Trent Baalke,JAX,2024,5,167,Keilan Robinson,RB,RB,Texas,RobiKe03
+Trent Baalke,JAX,2024,6,212,Cam Little,K,K,Arkansas,LittCa00
+Trent Baalke,JAX,2024,7,236,Myles Cole,OLB,FLEX,Texas Tech,ColeMy00
+Trent Baalke,SF,2011,1,7,Aldon Smith,DE,EDGE,Missouri,SmitAl04
+Trent Baalke,SF,2011,2,36,Colin Kaepernick,QB,QB,Nevada,KaepCo00
+Trent Baalke,SF,2011,3,80,Chris Culliver,DB,FLEX,South Carolina,CullCh00
+Trent Baalke,SF,2011,4,115,Kendall Hunter,RB,RB,Oklahoma St.,HuntKe00
+Trent Baalke,SF,2011,5,163,Daniel Kilgore,G,IOL,Appalachian St.,KilgDa00
+Trent Baalke,SF,2011,6,182,Ronald Johnson,WR,WR,USC,JohnRo05
+Trent Baalke,SF,2011,6,190,Colin Jones,DB,FLEX,TCU,JoneCo01
+Trent Baalke,SF,2011,7,211,Bruce Miller,DE,EDGE,Central Florida,MillBr02
+Trent Baalke,SF,2011,7,239,Michael Person,G,IOL,Montana St.,PersMi00
+Trent Baalke,SF,2011,7,250,Curtis Holcomb,DB,FLEX,Florida A&M,HolcCu00
+Trent Baalke,SF,2012,1,30,A.J. Jenkins,WR,WR,Illinois,JenkA.00
+Trent Baalke,SF,2012,2,61,LaMichael James,RB,RB,Oregon,JameLa00
+Trent Baalke,SF,2012,4,117,Joe Looney,G,IOL,Wake Forest,LoonJo01
+Trent Baalke,SF,2012,5,165,Darius Fleming,LB,LB,Notre Dame,FlemDa00
+Trent Baalke,SF,2012,6,180,Trent Robinson,DB,FLEX,Michigan St.,RobiTr02
+Trent Baalke,SF,2012,6,199,Jason Slowey,OL,IOL,Western Oregon,SlowJa00
+Trent Baalke,SF,2012,7,237,Cam Johnson,DE,EDGE,Virginia,JohnCa01
+Trent Baalke,SF,2013,1,18,Eric Reid,DB,FLEX,LSU,ReidEr00
+Trent Baalke,SF,2013,2,40,Tank Carradine,DE,EDGE,Florida St.,CarrCo00
+Trent Baalke,SF,2013,2,55,Vance McDonald,TE,TE,Rice,McDoVa00
+Trent Baalke,SF,2013,3,88,Corey Lemonier,DE,EDGE,Auburn,LemoCo00
+Trent Baalke,SF,2013,4,128,Quinton Patton,WR,WR,Louisiana Tech,PattQu00
+Trent Baalke,SF,2013,4,131,Marcus Lattimore,RB,RB,South Carolina,LattMa00
+Trent Baalke,SF,2013,5,157,Quinton Dial,DE,EDGE,Alabama,DialQu00
+Trent Baalke,SF,2013,6,180,Nick Moody,LB,LB,Florida St.,MoodNi00
+Trent Baalke,SF,2013,7,237,B.J. Daniels,QB,QB,South Florida,DaniB.00
+Trent Baalke,SF,2013,7,246,Carter Bykowski,OL,IOL,Iowa St.,BykoCa00
+Trent Baalke,SF,2013,7,252,Marcus Cooper,DB,FLEX,Rutgers,CoopMa00
+Trent Baalke,SF,2014,1,30,Jimmie Ward,DB,FLEX,Northern Illinois,WardJi01
+Trent Baalke,SF,2014,2,57,Carlos Hyde,RB,RB,Ohio St.,HydeCa00
+Trent Baalke,SF,2014,3,70,Marcus Martin,C,IOL,USC,MartMa01
+Trent Baalke,SF,2014,3,77,Chris Borland,LB,LB,Wisconsin,BorlCh00
+Trent Baalke,SF,2014,3,100,Brandon Thomas,OL,IOL,Clemson,ThomBr02
+Trent Baalke,SF,2014,4,106,Bruce Ellington,WR,WR,South Carolina,ElliBr00
+Trent Baalke,SF,2014,4,129,Dontae Johnson,DB,FLEX,North Carolina St.,JohnDo02
+Trent Baalke,SF,2014,5,150,Aaron Lynch,DE,EDGE,South Florida,LyncAa00
+Trent Baalke,SF,2014,5,170,Keith Reaser,DB,FLEX,Florida Atlantic,ReasKe00
+Trent Baalke,SF,2014,6,180,Kenneth Acker,DB,FLEX,SMU,AckeKe00
+Trent Baalke,SF,2014,7,243,Kaleb Ramsey,DE,EDGE,Boston Col.,RamsKa00
+Trent Baalke,SF,2014,7,245,Trey Millard,FB,RB,Oklahoma,MillTr00
+Trent Baalke,SF,2015,1,17,Arik Armstead,DT,DT,Oregon,ArmsAr01
+Trent Baalke,SF,2015,2,46,Jaquiski Tartt,S,S,Samford,TartJa00
+Trent Baalke,SF,2015,3,79,Eli Harold,OLB,FLEX,Virginia,HaroEl00
+Trent Baalke,SF,2015,4,117,Blake Bell,TE,TE,Oklahoma,BellBl00
+Trent Baalke,SF,2015,4,126,Mike Davis,RB,RB,South Carolina,DaviMi01
+Trent Baalke,SF,2015,4,132,DeAndre Smelter,WR,WR,Georgia Tech,SmelDe00
+Trent Baalke,SF,2015,5,165,Bradley Pinion,P,P,Clemson,PiniBr00
+Trent Baalke,SF,2015,6,190,Ian Silberman,G,IOL,Boston Col.,SilbIa00
+Trent Baalke,SF,2015,7,244,Trent Brown,G,IOL,Florida,BrowTr02
+Trent Baalke,SF,2015,7,254,Rory Anderson,TE,TE,South Carolina,AndeRo01
+Trent Baalke,SF,2016,1,7,DeForest Buckner,DE,EDGE,Oregon,BuckDe00
+Trent Baalke,SF,2016,1,28,Joshua Garnett,G,IOL,Stanford,GarnJo00
+Trent Baalke,SF,2016,3,68,Will Redmond,CB,CB,Mississippi St.,RedmWi00
+Trent Baalke,SF,2016,4,133,Rashard Robinson,CB,CB,LSU,RobiRa00
+Trent Baalke,SF,2016,5,142,Ronald Blair,DE,EDGE,Appalachian St.,BlaiRo00
+Trent Baalke,SF,2016,5,145,John Theus,T,OT,Georgia,TheuJo00
+Trent Baalke,SF,2016,5,174,Fahn Cooper,T,OT,Mississippi,CoopFa00
+Trent Baalke,SF,2016,6,207,Jeff Driskel,QB,QB,Louisiana Tech,DrisJe00
+Trent Baalke,SF,2016,6,211,Kelvin Taylor,RB,RB,Florida,TaylKe01
+Trent Baalke,SF,2016,6,213,Aaron Burbridge,WR,WR,Michigan St.,BurbAa00
+Trent Baalke,SF,2016,7,249,Prince Charles Iworah,CB,CB,Western Kentucky,IworPr00

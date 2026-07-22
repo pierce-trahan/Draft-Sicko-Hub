@@ -25,5 +25,5 @@ All roadmap specs are now drafted. New specs get added here as scope emerges.
 These are scouting-judgment data tasks to do *with the user*, referenced by the specs above:
 - **T-1** — full per-position trait lists + weights (`TRAIT_SCHEMAS`, Spec 03).
 - **U-1** — the usage role catalog (`usageRoles.ts`, Spec 04), FLEX-heavy cases first.
-- **G-2 content** — the 3-GM subset draft data (manual PFR CSV export, Spec 02).
+- **G-2 content** — ✅ **prepared:** 254 GM-attributed picks (Roseman/Schoen/Baalke) in `pipeline-input/gm-subset/` (derived from manual PFR exports; raw kept offline per G-1). Ready for the Spec 02 pipeline.
 </content>
