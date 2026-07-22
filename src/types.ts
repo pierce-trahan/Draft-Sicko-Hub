@@ -65,3 +65,38 @@ export interface Scheme {
   description: string;
   favoredPositions: string[];
 }
+
+// ==========================================
+// Spec 01 — Pairwise Elo Preference Engine Types
+// ==========================================
+
+export type PreferenceOutcome =
+  | 'strong_a'
+  | 'slight_a'
+  | 'toss_up'
+  | 'slight_b'
+  | 'strong_b';
+
+export interface PreferenceComparison {
+  position: string;         // 'QB', 'WR', ... — the pool this belongs to
+  playerAId: string;
+  playerBId: string;
+  outcome: PreferenceOutcome;
+  timestamp: number;
+}
+
+export interface PreferenceRating {
+  playerId: string;
+  position: string;
+  rating: number;           // Elo, starts 1500
+  comparisons: number;      // count this player has been in
+}
+
+// Per-position preference state, keyed by position.
+export interface PreferenceState {
+  [position: string]: {
+    ratings: Record<string, PreferenceRating>;  // by playerId
+    history: PreferenceComparison[];
+    updatedAt: number;
+  };
+}

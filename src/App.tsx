@@ -313,7 +313,8 @@ export default function App() {
       type: "full_backup",
       players,
       rankings,
-      customBoards
+      customBoards,
+      preferences: JSON.parse(localStorage.getItem('nfl_draft_preferences') || 'null')
     };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -377,6 +378,9 @@ export default function App() {
           saveRankingsToStorage(json.rankings);
           if (Array.isArray(json.customBoards)) {
             setCustomBoards(json.customBoards);
+          }
+          if (json.preferences) {
+            localStorage.setItem('nfl_draft_preferences', JSON.stringify(json.preferences));
           }
           setImportStatus({
             type: 'success',
@@ -1214,6 +1218,12 @@ export default function App() {
             <PlayerRankingMatrix
               players={players}
               onSelectPlayer={setSelectedPlayer}
+              activeBoardKey={activeBoardKey}
+              rankings={rankings}
+              activeBoardOrder={getActiveBoardOrder()}
+              onCommitToBoard={(boardKey, orderedIds) =>
+                saveRankingsToStorage({ ...rankings, [boardKey]: orderedIds })
+              }
             />
           )}
 
