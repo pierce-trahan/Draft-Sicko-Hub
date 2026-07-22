@@ -199,6 +199,10 @@ Track unresolved calls here so they don't get lost between sessions.
 | 6 | Keep a visible version badge? | Open | Currently `V2.4` |
 | 7 | Confirm Big Board Lab feature details | Open | Verify once logged in on Chrome |
 | 8 | Naming standardization | ✅ **Done** | Applied across codebase (§4) |
+| F-1 | Formation data: split numbers out of prose | ✅ **Decided** | Add numeric `usagePct`/`runPct`/`passPct` fields (formation-trends-audit) |
+| F-2 | Formation data: structure keyAttributes + link archetypes | ✅ **Decided** | Prerequisite for Spec 04 (formation-trends-audit) |
+| F-3 | Formation numbers: illustrative vs. data-derived | ✅ **Decided** | Hybrid — illustrative + swap-ready now, nflverse-derived later; label as illustrative (formation-trends-audit) |
+| F-4 | Formation data: add defensive fronts | ✅ **Decided** | Offense-only today; add defense (formation-trends-audit) |
 | G-1 | GM acquisition / PFR ToS | ✅ **Decided** | Hybrid, no live scraping: manual CSV export (subset) + nflverse (scale); ship derived aggregates + attribution (Spec 02) |
 | G-2 | GM subset choice (which 2–3 GMs) | ✅ **Decided** | Roseman (elite), Schoen (mid), Baalke (boom-bust) — Spec 02 §A6 |
 | G-3 | Tweener position handling | ✅ **Decided** | First-class `FLEX` bucket; rich usage-projection is a separate future spec (Spec 02) |

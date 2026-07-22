@@ -83,4 +83,5 @@ Athletic-outlier weighting from RAS/combine (future thread — see `docs/researc
 - **U-1 — Role catalog authoring.** The `usageRoles.ts` catalog (roles, rewarded traits, formation spots) is a scouting-judgment content task; author with the user. Ship the shape + seed roles for the FLEX-heavy cases (edge/off-ball, slot/TE, box-S/LB) first.
 - **U-2 — AI rationale on/off by default.** Deterministic-only vs. AI-polished default. Recommend deterministic default, AI opt-in.
 - **U-3 — Depends on Spec 03 landing first** (position traits). Sequence accordingly.
+- **U-4 — Formation data needs normalization first.** The `FormationTrend.keyAttributes`/`preferredArchetypes` this spec consumes are currently **prose**, not machine-usable. Decision **F-2** in [`docs/research/formation-trends-audit.md`](../research/formation-trends-audit.md) covers structuring them (`{trait, op, value}` + position-group links). Do that normalization as part of, or just before, this spec.
 </content>
