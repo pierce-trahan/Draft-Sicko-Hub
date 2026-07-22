@@ -318,7 +318,7 @@ export default function App() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `prospect_engine_full_backup.json`);
+    downloadAnchor.setAttribute("download", `sickos_draft_hub_full_backup.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -393,7 +393,7 @@ export default function App() {
                 message: `Heuristically parsed and loaded ${json.length} players into Draft Class.`
               });
             } else {
-              throw new Error("Unrecognized JSON array format. Please import a standard ProspectEngine export file.");
+              throw new Error("Unrecognized JSON array format. Please import a standard Sicko's Draft Hub export file.");
             }
           } else {
             throw new Error("Unrecognized export file format. Could not locate standard schema tags.");
@@ -575,7 +575,7 @@ export default function App() {
             <Star className="w-5 h-5 text-emerald-500 fill-emerald-500/10 animate-pulse" />
             <div>
               <h1 className="header-title font-serif font-bold italic text-slate-300 text-xl sm:text-2xl tracking-tight leading-none flex items-center gap-2">
-                ProspectEngine <span className="font-mono text-[9px] not-italic text-slate-500 font-bold uppercase tracking-widest border border-slate-300/40 px-2 py-0.5 rounded-full">V2.4</span>
+                Sicko's Draft Hub <span className="font-mono text-[9px] not-italic text-slate-500 font-bold uppercase tracking-widest border border-slate-300/40 px-2 py-0.5 rounded-full">V2.4</span>
               </h1>
             </div>
           </div>
@@ -1345,7 +1345,7 @@ export default function App() {
               {dataHubTab === 'import' && (
                 <div className="space-y-5">
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Import or update standard JSON files previously exported from ProspectEngine. Choose the type of import operation you would like to run:
+                    Import or update standard JSON files previously exported from Sicko's Draft Hub. Choose the type of import operation you would like to run:
                   </p>
 
                   <div className="grid grid-cols-1 gap-4">

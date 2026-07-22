@@ -44,22 +44,21 @@ These exist to prevent the exact thing the scattered competitor tools suffer fro
 
 ---
 
-## 4. Naming & Branding — DECIDED (for now)
+## 4. Naming & Branding — DECIDED & APPLIED
 
-**Product name: `Sicko's Draft Hub`.** Provisional but authoritative until changed here.
+**Product name: `Sicko's Draft Hub`.** Provisional but authoritative until changed here. Standardized across the codebase:
 
-The name is currently inconsistent across the codebase. Standardize all of the following (task for engineering):
-
-| Location | Current | Target |
+| Location | Was | Now |
 |---|---|---|
-| App header (`src/App.tsx`) | `ProspectEngine V2.4` | `Sicko's Draft Hub` |
-| `index.html` `<title>` | `ProspectEngine // V2.4` | `Sicko's Draft Hub` |
-| `metadata.json` `name` | `NFL Draft Prospect Board & Scout Tool` | `Sicko's Draft Hub` |
-| `package.json` `name` | `react-example` | `sickos-draft-hub` |
-| `README.md` | AI Studio boilerplate | Real product README |
-| localStorage keys (`nfl_draft_*`) | keep as-is | **do not rename** (would orphan existing user data) |
+| App header (`src/App.tsx`) | `ProspectEngine V2.4` | ✅ `Sicko's Draft Hub V2.4` |
+| `index.html` `<title>` | `ProspectEngine // V2.4` | ✅ `Sicko's Draft Hub` |
+| `metadata.json` `name` | `NFL Draft Prospect Board & Scout Tool` | ✅ `Sicko's Draft Hub` |
+| `package.json` `name` | `react-example` | ✅ `sickos-draft-hub` |
+| App copy (import blurb, error msg, export filename) | `ProspectEngine` / `prospect_engine_*` | ✅ `Sicko's Draft Hub` / `sickos_draft_hub_full_backup.json` |
+| `README.md` | AI Studio boilerplate | ✅ Real product README |
+| **localStorage keys** (`nfl_draft_*`, `prospect_engine_*`) | — | 🔒 **intentionally left as-is** — renaming orphans existing user data |
 
-Version label (`V2.4`) — decide whether to keep a visible version badge or drop it. *(Open item.)*
+Version label (`V2.4`) — kept for now; decide whether to keep a visible version badge or drop it. *(Open item #6.)*
 
 ---
 
@@ -102,9 +101,8 @@ Big Board Lab's own description: *"pick between two players at a time and an Elo
 - **Output — the sacred number:** each player gets an emergent preference score + rank within position. **Surfaced, saved, and never auto-hidden.**
 - **The learning payoff (our differentiator):** show the user their **Elo/preference board next to their deliberate grade board** and highlight divergences — "your gut ranks X above Y, but your grades say the opposite." *That* is the self-audit insight the whole tool is about.
 
-### OPEN DECISION — how the Elo number relates to the boards
-> When a pairwise session finishes, does its ranking (a) stay a **separate "preference board"** you compare against your manual/grade board, (b) **seed/overwrite** a chosen board's order, or (c) both (separate by default, with an opt-in "commit to a board")?
-> **Claude's recommendation:** **(c)** — keep it separate by default to preserve the emergent purity *and* enable the gut-vs-grades comparison, with an explicit "commit as board" action. Confirm before we spec the data model.
+### DECIDED — how the Elo number relates to the boards
+**Both.** The pairwise session produces a **separate "preference board"** that is preserved by default (protecting the emergent purity and powering the gut-vs-grades comparison), **and** the user can explicitly **commit it to a board** (seed/overwrite a chosen board's order) via an intentional action. Separate-by-default; commit-on-demand.
 
 ---
 
@@ -116,17 +114,20 @@ A GM entity capturing **historical draft tendencies**: which positions they take
 ### Data source & approach — CONFIRMED
 This is **data-derived, not hand-authored.** An **agent pulls draft history from Pro Football Reference, per team**, then sorts/filters that data; we build the GM tendency models on top of the cleaned dataset.
 
+**GM↔year mapping — SOLVED.** Pro Football Reference lists the **General Manager directly in each team-season header block** (e.g. `pro-football-reference.com/teams/car/2017.htm` → "General Manager: Dave Gettleman"), alongside Coach, coordinators, owner, and offensive/defensive scheme. So the GM-per-year mapping and the draft-picks data live on the same per-team-season pages — no separate GM-tenure source required.
+
 ### Pipeline shape (to spec)
-1. **Extract:** agent scrapes/collects per-team historical draft picks (year, round, pick, player, position, college) from Pro Football Reference. *(Respect their terms/rate limits — decide caching/refresh cadence.)*
-2. **Attribute to GM:** map each draft year → the GM in charge that year (needs a GM-tenure table; PFR has GM/exec info in places but this mapping likely needs its own source/verification).
+1. **Extract:** agent walks each team's season pages (`/teams/{abbr}/{year}.htm`), scraping (a) the **General Manager** field from the header block and (b) that year's **draftees table** (year, round, pick, player, position, college). *(Respect PFR terms/rate limits — throttle and cache; scrape offline, not at runtime.)*
+2. **Attribute to GM:** join picks → GM using the same-page GM field. Handle mid-season/offseason GM changes and interim GMs as edge cases.
 3. **Transform:** aggregate into tendency metrics — position-by-round distribution, archetype lean, average draft-value delta (reach/steal), trait preferences where derivable.
 4. **Load:** ship as a static dataset the app reads (keeps the app local-first; the scrape is a build-time/offline job, not a runtime dependency).
 5. **Build on it:** GM Profile views, and optionally realistic AI-GM logic in the Draft Simulator.
 
+### v1 scope — DECIDED
+**Prove the pipeline on a small subset first** (a handful of teams / GMs), validate the extract→attribute→transform→load flow and the GM-attribution edge cases, *then* scale to all 32 teams' full history.
+
 ### OPEN DECISIONS
-> - **GM↔year mapping source** — where does the authoritative "who was GM in year N" table come from? (Not cleanly on PFR.)
-> - **Scope of v1** — all 32 teams full history, or start with a handful to prove the pipeline?
-> - **Refresh model** — one-time dataset, or re-run yearly after each draft?
+> - **Refresh model** — one-time dataset, or re-run yearly after each draft? *(Lower priority; decide before scaling past the subset.)*
 
 ---
 
@@ -155,8 +156,8 @@ Ordered to lock the spine before adding surface area.
 
 **Phase 0 — Alignment & hygiene** *(now)*
 - [x] Establish this vision doc.
-- [ ] Standardize name → Sicko's Draft Hub (§4).
-- [ ] Confirm the open decisions in §6 and §7.
+- [x] Standardize name → Sicko's Draft Hub (§4).
+- [x] Resolve the flagship + GM-pipeline decisions (§6, §7).
 
 **Phase 1 — Fix the flagship**
 - [ ] Rebuild Scouting Matrix as the Pairwise Elo Preference Engine (§6).
@@ -185,13 +186,14 @@ Track unresolved calls here so they don't get lost between sessions.
 
 | # | Decision | Status | Note |
 |---|---|---|---|
-| 1 | Elo ranking → separate board vs. seeds a board vs. both | **Open** | Claude recommends "both / separate-by-default" (§6) |
+| 1 | Elo ranking → separate board vs. seeds a board vs. both | ✅ **Decided** | **Both** — separate-by-default, commit-on-demand (§6) |
 | 2 | Elo vs. Bradley-Terry for the rating math | Open | Elo confirmed as BBL's approach; revisit if we want full-MLE ranking |
-| 3 | GM↔year authoritative mapping source | **Open** | Needed before pipeline (§7) |
-| 4 | GM pipeline v1 scope (all 32 vs. subset) | Open | Recommend subset to prove pipeline |
-| 5 | GM data refresh cadence | Open | One-time vs. yearly |
+| 3 | GM↔year authoritative mapping source | ✅ **Decided** | PFR team-season header lists the GM directly (§7) |
+| 4 | GM pipeline v1 scope (all 32 vs. subset) | ✅ **Decided** | Prove pipeline on a subset first (§7) |
+| 5 | GM data refresh cadence | Open | One-time vs. yearly; low priority until we scale |
 | 6 | Keep a visible version badge? | Open | Currently `V2.4` |
 | 7 | Confirm Big Board Lab feature details | Open | Verify once logged in on Chrome |
+| 8 | Naming standardization | ✅ **Done** | Applied across codebase (§4) |
 
 ---
 
