@@ -43,6 +43,20 @@ export interface Player {
   gradeHistory?: GradeHistoryPoint[];
   labels?: string[];
   photoUrl?: string;
+  positionTraits?: Record<string, number>; // Spec 03: optional position-specific sub-traits (0-99)
+}
+
+// ==========================================
+// Spec 03 — Position-Aware Trait Model
+// ==========================================
+
+export type Pillar = 'athleticism' | 'technique' | 'production' | 'footballIQ' | 'sizeAndFrame';
+
+export interface TraitDef {
+  key: string;      // stable id, e.g. 'arm_strength'
+  label: string;    // 'Arm Strength'
+  pillar: Pillar;   // which of the 5 pillars it rolls up into
+  weight: number;   // relative importance for this position (0..1, per-position sum ~1)
 }
 
 export interface Team {
