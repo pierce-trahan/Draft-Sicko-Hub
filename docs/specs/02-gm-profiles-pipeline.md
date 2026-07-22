@@ -55,9 +55,19 @@ Ship a **static dataset** in `src/data/` (e.g. `gmData.ts` exporting typed array
 - **Mid-tenure / interim GMs**, co-GMs, or a change between seasons → tenure boundaries from the per-year field are authoritative.
 - **Traded/forfeited picks, supplemental picks, comp picks** → include what the table shows; don't synthesize.
 
-### A6. v1 scope — DECIDED: prove the pipeline on a subset
+### A6. v1 scope — DECIDED: prove the pipeline on a 3-GM subset
 
-Pick **2–3 GMs with clean, well-defined multi-year single-team tenures** (confirm choices with the user) and run the full extract → attribute → transform → load flow end-to-end. Validate attribution, franchise-code mapping, position normalization, and aggregation **before** scaling to all 32 teams / full history.
+Run the full extract → attribute → transform → load flow end-to-end on **three GMs chosen for distinct drafting fingerprints** (if the metrics can't differentiate these three, they're too weak):
+
+| Role | GM | Teams (era) | What they test |
+|---|---|---|---|
+| Elite / process-driven | **Howie Roseman** | PHI | The "gold standard" strategic profile — clean multi-year single-team tenure |
+| Mid / solid-on-draft | **Joe Schoen** | NYG | An average-to-solid draft baseline (draft work only) |
+| Boom-bust / athletic gambler | **Trent Baalke** | SF, then JAX | **Multi-team attribution** + a strong-but-hard-to-capture "outlier athlete" reputation |
+
+Validate attribution, franchise-code mapping (Baalke spans SF + JAX), position normalization, and aggregation **before** scaling to all 32 teams / full history.
+
+> **Expectation-setting on Baalke:** his signature tendency — betting on *outlier athletes whose production lagged their traits* — is the **archetype/trait lean** metric marked out of scope in §B3 (needs athletic + production data PFR pick tables don't carry). v1 will surface his *positional / round / college* patterns, not the athletic-gamble fingerprint. **Future thread:** a follow-up spec joining draft picks to **historical combine measurables** (available via PFR combine / nflverse) would quantify "toolsy reach" and finally capture this. Note it; don't build it in v1.
 
 ---
 
@@ -152,7 +162,7 @@ Reach/value vs. consensus; historical archetype/trait lean; trade-tendency analy
 ## Open items (also tracked in VISION.md §11)
 
 - **G-1 — Scraping approach / ToS.** Confirm rate-limited personal-scale scraping + attribution is acceptable, or pursue a licensed/export path, before scaling past the subset.
-- **G-2 — Subset choice.** Which 2–3 GMs? (Prefer clean, single-team, multi-year tenures.)
+- **G-2 — Subset choice.** ✅ **Decided:** Howie Roseman (PHI, elite), Joe Schoen (NYG, mid), Trent Baalke (SF→JAX, boom-bust). See §A6.
 - **G-3 — EDGE vs. LB normalization rule.** Lock the deterministic mapping for tweener DE/OLB positions.
 - **#5 — Refresh cadence.** One-time vs. re-run yearly after each draft.
 </content>

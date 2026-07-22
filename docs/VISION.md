@@ -197,7 +197,7 @@ Track unresolved calls here so they don't get lost between sessions.
 | 7 | Confirm Big Board Lab feature details | Open | Verify once logged in on Chrome |
 | 8 | Naming standardization | ✅ **Done** | Applied across codebase (§4) |
 | G-1 | GM scraping approach / PFR ToS | **Open** | Confirm before scaling past subset (Spec 02) |
-| G-2 | GM subset choice (which 2–3 GMs) | **Open** | Prefer clean single-team multi-year tenures (Spec 02) |
+| G-2 | GM subset choice (which 2–3 GMs) | ✅ **Decided** | Roseman (elite), Schoen (mid), Baalke (boom-bust) — Spec 02 §A6 |
 | G-3 | EDGE vs. LB position-normalization rule | **Open** | Lock deterministic mapping (Spec 02) |
 
 ---
