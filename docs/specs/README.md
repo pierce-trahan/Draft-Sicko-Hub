@@ -10,18 +10,15 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 | 02 | [GM Profiles + PFR Pipeline](02-gm-profiles-pipeline.md) | 3 | — (parallel) | ✅ Spec ready — all open items (G-1/2/3) resolved |
 | 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ Spec ready (T-1 = trait-list content authoring) |
 | 04 | [Positional Usage & Projection](04-positional-usage-projection.md) | 2 | **03** | ✅ Spec ready (U-1 = role-catalog content authoring) |
+| 05 | [Athletic Profile & Outlier Metric](05-athletic-profile-outlier-metric.md) | 2.5 | — (enhances 02/03/04) | ✅ Spec ready — captures the Baalke fingerprint |
+| 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** (+05) | ✅ Spec ready |
+| 07 | [Open-Source Packaging & Publish](07-open-source-packaging-publish.md) | 4 | — | ✅ Spec ready |
 
-**Suggested build order:** 01 (flagship) → 03 → 04 (Phase 2 chain) → 02 (parallelizable anytime; needs the manual PFR export for its subset).
+**Suggested build order:** 01 (flagship) → 03 → 04 (Phase 2 chain) → 05 (athletic layer) → 02 (parallelizable anytime; needs the manual PFR export for its subset) → 06 (needs 02 data) → 07 (packaging, last).
 
-## Backlog — not yet drafted
+## Backlog
 
-Scoped one-liners; write these as they come up.
-
-| # | Spec (proposed) | Phase | Scope |
-|---|---|---|---|
-| 05 | Athletic Profile & Outlier Metric | 2.5 / future | Join draft picks/prospects to combine + RAS athleticism (`docs/research/data-sources.md`); quantify "toolsy reach vs. production" — captures the Baalke fingerprint deferred from Spec 02, and can weight Spec 04 fits. |
-| 06 | AI-GM Simulator Behavior | 3 (optional) | Feed Spec 02 GM tendencies into the Draft Simulator so CPU teams pick like the real GM (position-by-round, archetype lean). |
-| 07 | Open-Source Packaging & Publish | 4 | Real README (done-ish), LICENSE, local-run/self-host instructions, data attributions, and the AI Studio publish path. |
+All roadmap specs are now drafted. New specs get added here as scope emerges.
 
 ## Content-authoring tasks (not code specs, but needed)
 

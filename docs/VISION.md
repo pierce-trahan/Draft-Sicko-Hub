@@ -167,19 +167,21 @@ Ordered to lock the spine before adding surface area.
 - [ ] Add the gut-vs-grades comparison view (the core learning payoff).
 
 **Phase 2 — Depth on evaluation**
-- [ ] Position-aware trait model (per-position traits + weighting, richer radar) → spec ready: [`docs/specs/03-position-aware-trait-model.md`](specs/03-position-aware-trait-model.md). Also aligns Comparer + Player Profile.
-- [ ] **Positional Usage & Projection** → spec ready: [`docs/specs/04-positional-usage-projection.md`](specs/04-positional-usage-projection.md) — avenues of usage + predictive best-scheme/formation-spot for tweener/`FLEX` prospects. Depends on Spec 03 + `SCHEMES` data.
+- [ ] Position-aware trait model (per-position traits + weighting, richer radar) → [`docs/specs/03`](specs/03-position-aware-trait-model.md). Also aligns Comparer + Player Profile.
+- [ ] **Positional Usage & Projection** → [`docs/specs/04`](specs/04-positional-usage-projection.md) — avenues of usage + predictive best-scheme/formation-spot for tweener/`FLEX` prospects. Depends on Spec 03 + `SCHEMES`.
+- [ ] **Athletic Profile & Outlier Metric** *(Phase 2.5)* → [`docs/specs/05`](specs/05-athletic-profile-outlier-metric.md) — combine/RAS athleticism + "toolsy reach vs. production." Captures the Baalke fingerprint; feeds 03/04/02.
 
-**Phase 3 — GM intelligence** → spec ready: [`docs/specs/02-gm-profiles-pipeline.md`](specs/02-gm-profiles-pipeline.md)
+**Phase 3 — GM intelligence** → [`docs/specs/02`](specs/02-gm-profiles-pipeline.md)
 - [ ] Build the Pro Football Reference draft-history pipeline (§7) — prove on a 2–3 GM subset first.
 - [ ] Ship GM Profile views (position-by-round, allocation, capital, college/conference lean).
-- [ ] (Optional) wire GM tendencies into the Draft Simulator as AI-GM behavior.
+- [ ] (Optional) wire GM tendencies into the Draft Simulator as AI-GM behavior → [`docs/specs/06`](specs/06-ai-gm-simulator-behavior.md). Depends on Spec 02 (+05).
 
-**Phase 4 — Polish & publish**
-- [ ] Real README + open-source packaging (local-run instructions, license).
-- [ ] Publishing path via Google AI system.
+**Phase 4 — Polish & publish** → [`docs/specs/07`](specs/07-open-source-packaging-publish.md)
+- [ ] License, data attributions, run-with/without-AI, self-host docs; AI Studio publish path.
 
 *(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in.)*
+
+**Full spec index + build order:** [`docs/specs/README.md`](specs/README.md).
 
 ---
 
