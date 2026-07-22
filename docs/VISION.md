@@ -137,6 +137,7 @@ This is **data-derived, not hand-authored.** An **agent pulls draft history from
 - **Static reference data** ships in `src/data/` (`initialProspects`, `teams`, `coachesData`, `teamReportsData`). GM data joins this as a generated dataset.
 - **AI layer:** `server.ts` already uses the Gemini API (`@google/genai`) server-side (currently for media scouting quotes). This is the seam where AI-GM simulation and any future generated analysis plug in.
 - **Principle:** scraped/derived data (GM history) is prepared **offline** and shipped static — the running app should not depend on live third-party sites.
+- **External data sources** (NFL + college + athleticism, with licenses) are catalogued in [`docs/research/data-sources.md`](research/data-sources.md). Headline: **nflverse** (CC-BY 4.0) is the redistribution-friendly spine; **CFBD** for college; **RAS** for athleticism; **PFR** (free CSV export) for GM-by-year. NFL+ grants no data/API access — use nflverse's public NGS aggregates.
 
 ---
 

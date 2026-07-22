@@ -40,9 +40,9 @@ For each `(pfr_code, year)` in the target range:
 
 **Acquisition method — DECIDED (hybrid, no live scraping):**
 - **Subset / preferred:** the **user manually exports** each needed team-season table via PFR's own **"Share & Export → Get table as CSV"** feature. The pipeline parses those **local CSV files** — no bot touches PFR's servers, which sidesteps the automated-extraction prohibition entirely. This is the path for the 3-GM subset.
-- **At full scale:** source **draft picks** from an **openly-licensed dataset** (nflverse / nfldata — redistribution-friendly) and use PFR/Wikipedia only for the small **GM-by-year** mapping.
-- **Redistribution safety:** ship **derived aggregates** (tendencies), *not* PFR's raw tables verbatim. Facts aren't copyrightable; our analysis is ours. Attribute "Data via Pro Football Reference / nflverse" in-app and in the README.
-- *(Verify in the tools search: whether per-table CSV export is still free or now behind Stathead.)*
+- **At full scale:** source **draft picks** from **nflverse** (`load_draft_picks()`, every pick since 1980, **CC-BY 4.0 → redistribution-friendly with attribution**) and use PFR/Wikipedia only for the small **GM-by-year** mapping. See [`docs/research/data-sources.md`](../research/data-sources.md).
+- **Redistribution safety:** ship **derived aggregates** (tendencies), *not* PFR's raw tables verbatim. Facts aren't copyrightable; our analysis is ours. Attribute "Data via nflverse / Pro Football Reference" in-app and in the README.
+- ✅ **Verified:** PFR per-table CSV export is **still free** ("Share & more → Get table as CSV"); Stathead is only needed for advanced queries.
 
 ### A3. Transform
 
