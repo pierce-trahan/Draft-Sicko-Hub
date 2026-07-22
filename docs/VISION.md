@@ -168,6 +168,7 @@ Ordered to lock the spine before adding surface area.
 **Phase 2 — Depth on evaluation**
 - [ ] Position-aware trait model (per-position traits + weighting, richer radar).
 - [ ] Align Prospect Comparer + Player Profile to the new trait model.
+- [ ] **Positional Usage & Projection** *(future spec)* — for tweener/`FLEX` prospects, break down avenues of usage and give a predictive best-scheme / best-formation-spot projection in the player profile. Depends on the trait model + `SCHEMES` data.
 
 **Phase 3 — GM intelligence** → spec ready: [`docs/specs/02-gm-profiles-pipeline.md`](specs/02-gm-profiles-pipeline.md)
 - [ ] Build the Pro Football Reference draft-history pipeline (§7) — prove on a 2–3 GM subset first.
@@ -196,9 +197,9 @@ Track unresolved calls here so they don't get lost between sessions.
 | 6 | Keep a visible version badge? | Open | Currently `V2.4` |
 | 7 | Confirm Big Board Lab feature details | Open | Verify once logged in on Chrome |
 | 8 | Naming standardization | ✅ **Done** | Applied across codebase (§4) |
-| G-1 | GM scraping approach / PFR ToS | **Open** | Confirm before scaling past subset (Spec 02) |
+| G-1 | GM acquisition / PFR ToS | ✅ **Decided** | Hybrid, no live scraping: manual CSV export (subset) + nflverse (scale); ship derived aggregates + attribution (Spec 02) |
 | G-2 | GM subset choice (which 2–3 GMs) | ✅ **Decided** | Roseman (elite), Schoen (mid), Baalke (boom-bust) — Spec 02 §A6 |
-| G-3 | EDGE vs. LB position-normalization rule | **Open** | Lock deterministic mapping (Spec 02) |
+| G-3 | Tweener position handling | ✅ **Decided** | First-class `FLEX` bucket; rich usage-projection is a separate future spec (Spec 02) |
 
 ---
 

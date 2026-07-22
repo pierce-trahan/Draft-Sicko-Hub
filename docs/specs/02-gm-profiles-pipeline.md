@@ -36,12 +36,18 @@ For each `(pfr_code, year)` in the target range:
 - Rate-limit hard (e.g. ≤ 1 request every 3–5s); random jitter; a descriptive User-Agent.
 - **Cache every fetched page to disk**; never re-fetch what you already have. The scrape is idempotent and resumable.
 - This runs **offline as a build/data step**, never at app runtime.
-- **Respect their Terms of Use.** Sports Reference restricts bulk scraping and has data-licensing/attribution expectations. See Open Item G-1 — the user should confirm the approach (rate-limited personal-scale scrape + attribution vs. a licensed/export path) before we scale past the subset. Attribute PFR as the data source in the app and README.
+- **Respect their Terms of Use.** Sports Reference restricts *automated bulk* scraping and has data-licensing/attribution expectations.
+
+**Acquisition method — DECIDED (hybrid, no live scraping):**
+- **Subset / preferred:** the **user manually exports** each needed team-season table via PFR's own **"Share & Export → Get table as CSV"** feature. The pipeline parses those **local CSV files** — no bot touches PFR's servers, which sidesteps the automated-extraction prohibition entirely. This is the path for the 3-GM subset.
+- **At full scale:** source **draft picks** from an **openly-licensed dataset** (nflverse / nfldata — redistribution-friendly) and use PFR/Wikipedia only for the small **GM-by-year** mapping.
+- **Redistribution safety:** ship **derived aggregates** (tendencies), *not* PFR's raw tables verbatim. Facts aren't copyrightable; our analysis is ours. Attribute "Data via Pro Football Reference / nflverse" in-app and in the README.
+- *(Verify in the tools search: whether per-table CSV export is still free or now behind Stathead.)*
 
 ### A3. Transform
 
 1. **Map PFR franchise code → app team id.** PFR codes are quirky and differ from the app's `Team.id` values. Build an explicit lookup (e.g. `crd→ARI`, `rav→BAL`, `gnb→GB`, `htx→HOU`, `clt→IND`, `sdg→LAC`, `ram→LAR`, `oti→TEN`, `rai→LV`, `nwe→NE`, `nor→NO`, `sfo→SF`, `tam→TB`, `kan→KC`, `sdg`/relocations handled by era). Relocations (SD→LAC, STL/LA Rams, OAK→LV, HOU Oilers→TEN) must map by year.
-2. **Normalize position** from PFR raw to the app's position groups (`QB, RB, WR, TE, OT, IOL, EDGE, DT, LB, CB, S`). E.g. `G/C/OG` → `IOL`; `DE/OLB` → `EDGE` or `LB` per era/scheme *(document the rule; edge/LB is genuinely ambiguous — pick a deterministic rule and note it)*; `DB/FS/SS` → `S`; `NT/DT` → `DT`; `T` → `OT`.
+2. **Normalize position** from PFR raw to the app's position groups (`QB, RB, WR, TE, OT, IOL, EDGE, DT, LB, CB, S`) **plus a first-class `FLEX` bucket** (G-3, decided). Clear cases: `G/C/OG` → `IOL`; `T` → `OT`; `NT/DT` → `DT`; `FS/SS` → `S`. **Genuinely ambiguous tweeners → `FLEX`** rather than a forced binary — e.g. `DE/OLB` tweeners, `DB` with no S/CB split, `LB/S` hybrids. This keeps GM tendencies honest (a pass-rush-heavy GM isn't distorted by an arbitrary EDGE-vs-LB coin flip). Document which raw tags route to `FLEX`.
 3. **Attribute each pick to a GM** using the same page's GM field. Assign a stable `gmId` slug (e.g. `dave-gettleman`). Build **GM tenures** `(teamId, startYear, endYear)` from the run of years a name appears for a team.
 4. Emit clean records (see data model).
 
@@ -161,8 +167,8 @@ Reach/value vs. consensus; historical archetype/trait lean; trade-tendency analy
 
 ## Open items (also tracked in VISION.md §11)
 
-- **G-1 — Scraping approach / ToS.** Confirm rate-limited personal-scale scraping + attribution is acceptable, or pursue a licensed/export path, before scaling past the subset.
+- **G-1 — Acquisition / ToS.** ✅ **Decided:** hybrid, no live scraping — user manually exports PFR CSVs for the subset; nflverse for picks + PFR/Wikipedia for GM-by-year at scale; ship derived aggregates with attribution. (Verify CSV-export availability in tools search.)
 - **G-2 — Subset choice.** ✅ **Decided:** Howie Roseman (PHI, elite), Joe Schoen (NYG, mid), Trent Baalke (SF→JAX, boom-bust). See §A6.
-- **G-3 — EDGE vs. LB normalization rule.** Lock the deterministic mapping for tweener DE/OLB positions.
+- **G-3 — Tweener handling.** ✅ **Decided:** ambiguous tweeners map to a first-class **`FLEX`** bucket (not a forced EDGE/LB binary). The richer "avenues of usage + predictive best-scheme/formation-spot" breakdown is a **separate future spec** (Positional Usage & Projection), tied to the Phase 2 trait model — not built here.
 - **#5 — Refresh cadence.** One-time vs. re-run yearly after each draft.
 </content>
