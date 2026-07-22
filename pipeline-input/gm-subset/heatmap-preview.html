@@ -1,0 +1,213 @@
+<title>GM Position × Round Tendencies — Sicko's Draft Hub</title>
+<style>
+  :root{
+    --bg:#020617; --panel:#0f172a; --panel-2:#0b1120; --line:#1e293b; --line-soft:#172033;
+    --ink:#e2e8f0; --ink-2:#94a3b8; --ink-3:#5b6b82;
+    --accent:#34d399; --accent-2:#10b981;
+    --hm:16 185 129;                 /* emerald rgb for the sequential fill */
+    --hm-ink:#ecfdf5; --hm-shadow:0 1px 2px rgba(0,0,0,.55);
+    --empty:#0a1424;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f4f7f6; --panel:#ffffff; --panel-2:#f8fafc; --line:#e2e8f0; --line-soft:#eef2f6;
+      --ink:#0f2419; --ink-2:#5c6b76; --ink-3:#93a1ac;
+      --accent:#059669; --accent-2:#047857;
+      --hm:5 150 105;
+      --hm-ink:#f0fdf4; --hm-shadow:0 1px 1px rgba(0,0,0,.35);
+      --empty:#f1f5f4;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#020617; --panel:#0f172a; --panel-2:#0b1120; --line:#1e293b; --line-soft:#172033;
+    --ink:#e2e8f0; --ink-2:#94a3b8; --ink-3:#5b6b82; --accent:#34d399; --accent-2:#10b981;
+    --hm:16 185 129; --hm-ink:#ecfdf5; --hm-shadow:0 1px 2px rgba(0,0,0,.55); --empty:#0a1424;
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f7f6; --panel:#ffffff; --panel-2:#f8fafc; --line:#e2e8f0; --line-soft:#eef2f6;
+    --ink:#0f2419; --ink-2:#5c6b76; --ink-3:#93a1ac; --accent:#059669; --accent-2:#047857;
+    --hm:5 150 105; --hm-ink:#f0fdf4; --hm-shadow:0 1px 1px rgba(0,0,0,.35); --empty:#f1f5f4;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+    padding:clamp(20px,4vw,52px);
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  .serif{font-family:Georgia,"Times New Roman",serif;font-style:italic}
+
+  header.masthead{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);display:inline-block}
+  h1{font-family:Georgia,serif;font-style:italic;font-weight:700;
+    font-size:clamp(26px,4.4vw,40px);line-height:1.05;margin:.35em 0 .3em;text-wrap:balance;letter-spacing:-.01em}
+  .dek{color:var(--ink-2);font-size:15px;max-width:60ch;margin:0}
+  .dek b{color:var(--ink);font-weight:600}
+
+  .legend{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;margin:22px 0 4px;
+    font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-2)}
+  .ramp{display:flex;align-items:center;gap:8px}
+  .swatches{display:flex;gap:3px}
+  .sw{width:26px;height:12px;border-radius:2px;border:1px solid var(--line-soft)}
+  .legend .note{color:var(--ink-3)}
+
+  .panels{display:flex;flex-direction:column;gap:26px;margin-top:26px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px clamp(14px,2.2vw,22px) 20px;overflow-x:auto}
+  .phead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:14px}
+  .pname{font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:21px;color:var(--ink)}
+  .pmeta{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-2);letter-spacing:.03em}
+  .pmeta b{color:var(--accent);font-weight:700}
+  .ppeak{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3);margin-top:2px;flex-basis:100%}
+  .ppeak b{color:var(--ink-2);font-weight:600}
+
+  table{border-collapse:separate;border-spacing:3px;width:auto;margin:0}
+  caption{caption-side:top;text-align:left;height:0;overflow:hidden;color:transparent}
+  th{font-family:ui-monospace,Menlo,monospace;font-weight:600;color:var(--ink-2);font-size:11px}
+  thead .dayband th{color:var(--ink-3);font-weight:600;font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;padding-bottom:2px;text-align:center;border-bottom:1px solid var(--line-soft)}
+  thead .rounds th{padding:4px 0;text-align:center}
+  thead .rounds th.corner{text-align:left}
+  tbody th{text-align:right;padding-right:10px;color:var(--ink);font-size:12px;white-space:nowrap}
+  td{width:52px;height:34px;text-align:center;vertical-align:middle;border-radius:5px;
+    background:rgb(var(--hm) / var(--a,0));position:relative;
+    font-family:ui-monospace,Menlo,monospace;font-size:13px;font-weight:600;
+    color:var(--hm-ink);text-shadow:var(--hm-shadow);cursor:default;
+    transition:outline-color .12s ease}
+  td.empty{background:var(--empty);color:var(--ink-3);text-shadow:none;font-weight:400}
+  td.empty::after{content:"·";color:var(--ink-3);opacity:.5}
+  td.peak{outline:2px solid var(--accent);outline-offset:-2px}
+  td:hover,td:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;z-index:2}
+  td:focus-visible{outline-offset:1px}
+
+  .foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);
+    color:var(--ink-3);font-size:12.5px;max-width:74ch;display:flex;flex-direction:column;gap:7px}
+  .foot b{color:var(--ink-2);font-weight:600}
+  .foot .src{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-3);letter-spacing:.02em}
+
+  #tip{position:fixed;pointer-events:none;z-index:50;opacity:0;transform:translateY(4px);
+    transition:opacity .1s ease,transform .1s ease;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:8px;
+    padding:8px 11px;box-shadow:0 12px 30px rgba(0,0,0,.4);max-width:230px}
+  #tip .t-h{font-family:Georgia,serif;font-style:italic;font-size:14px;color:var(--ink);margin-bottom:2px}
+  #tip .t-s{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--ink-2)}
+  #tip .t-s b{color:var(--accent);font-weight:700}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="eyebrow">Sicko's Draft Hub · GM Profiles preview</div>
+    <h1>Position &times; Round Draft Tendencies</h1>
+    <p class="dek">Where each general manager actually spends draft picks — position group (rows) against round (columns), across their full tenure. A preview of the <b>Spec 02 GM Profile</b> view, built from <b>254 attributed picks</b>.</p>
+  </header>
+
+  <div class="legend">
+    <div class="ramp">
+      <span>Fewer</span>
+      <div class="swatches" id="rampSwatches"></div>
+      <span>More picks</span>
+    </div>
+    <span class="note">Color scaled <b>within each GM</b> (darkest = that GM's most-used cell)</span>
+    <span class="note">Rounds grouped by draft day</span>
+  </div>
+
+  <div class="panels" id="panels"></div>
+
+  <div class="foot">
+    <div><b>Reading it.</b> Because sample sizes differ (Roseman 124 picks vs. Schoen 31), each panel is shaded relative to its own peak cell — compare the <i>pattern</i> within a GM, not raw shade across GMs. Each panel notes its peak.</div>
+    <div><b>Caveats.</b> <span class="mono">FLEX</span> holds genuine tweeners <i>and</i> PFR's generic <span class="mono">DB</span>/<span class="mono">OLB</span> labels, so it runs high. Specialists (K/P) omitted. Small samples read as directional.</div>
+    <div class="src">Data via Pro Football Reference (manual export, derived) · Roseman PHI '10–'25 · Schoen NYG '22–'25 · Baalke SF '11–'16 + JAX '21–'24</div>
+  </div>
+</div>
+
+<div id="tip" role="tooltip" aria-hidden="true"><div class="t-h"></div><div class="t-s"></div></div>
+
+<script>
+const DATA = {"rows":["QB","RB","WR","TE","OT","IOL","EDGE","DT","LB","CB","S","FLEX"],"gms":{"Howie Roseman":{"total":124,"years":[2010,2011,2012,2013,2014,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],"teams":["PHI"],"matrix":[[1,1,1,2,1,2,0],[0,1,0,2,3,1,2],[2,2,1,1,4,3,0],[0,2,0,1,0,1,0],[2,0,0,0,2,3,1],[1,2,2,1,3,4,0],[2,1,2,2,2,3,6],[3,0,2,1,0,2,2],[2,1,2,2,2,2,3],[1,1,1,1,1,1,0],[0,1,0,1,1,1,1],[1,3,2,5,2,0,2]]},"Joe Schoen":{"total":31,"years":[2022,2023,2024,2025],"teams":["NYG"],"matrix":[[1,0,0,0,0,0,0],[0,0,0,1,2,0,0],[1,1,1,0,0,0,0],[0,0,0,2,0,0,1],[0,0,0,0,0,0,0],[1,1,1,0,2,0,0],[2,0,0,0,0,0,0],[0,0,1,0,1,0,1],[0,0,0,0,1,2,0],[0,0,1,0,0,1,1],[0,0,0,0,0,0,0],[1,1,1,1,0,0,1]]},"Trent Baalke":{"total":99,"years":[2011,2012,2013,2014,2015,2016,2021,2022,2023,2024],"teams":["JAX","SF"],"matrix":[[1,1,0,0,0,1,1],[1,2,1,3,2,1,1],[2,0,0,3,0,4,0],[0,2,0,1,1,0,1],[0,1,0,0,2,0,0],[2,0,3,2,1,2,4],[3,1,1,1,3,0,3],[1,1,0,2,0,0,2],[1,0,2,1,2,1,0],[0,0,1,1,1,1,1],[0,1,0,0,0,0,0],[2,1,4,2,2,5,4]]}}};
+const DAYOF = r => r===1 ? "Day 1" : (r<=3 ? "Day 2" : "Day 3");
+
+// legend swatches (alpha ramp preview)
+const rs = document.getElementById('rampSwatches');
+[0.12,0.30,0.48,0.66,0.85].forEach(a=>{
+  const s=document.createElement('div'); s.className='sw';
+  s.style.background=`rgb(var(--hm) / ${a})`; rs.appendChild(s);
+});
+
+const panels = document.getElementById('panels');
+for (const [gm, d] of Object.entries(DATA.gms)){
+  let max=0, peakR=0, peakC=0;
+  d.matrix.forEach((row,ri)=>row.forEach((v,ci)=>{ if(v>max){max=v;peakR=ri;peakC=ci;} }));
+  const yrs = d.years, span = `${yrs[0]}–${yrs[yrs.length-1]}`;
+
+  const panel=document.createElement('section'); panel.className='panel';
+  const peakPos=DATA.rows[peakR], peakRound=peakC+1;
+  panel.innerHTML=`
+    <div class="phead">
+      <div class="pname">${gm}</div>
+      <div class="pmeta">${d.teams.join(' / ')} · ${span} · <b>${d.total}</b> picks</div>
+      <div class="ppeak">Peak cell: <b>${max}</b> picks — ${peakPos} in Round ${peakRound} (${DAYOF(peakRound)})</div>
+    </div>`;
+
+  const table=document.createElement('table');
+  table.innerHTML=`<caption>${gm} position by round</caption>
+    <thead>
+      <tr class="dayband"><th></th><th>Day 1</th><th colspan="2">Day 2</th><th colspan="4">Day 3</th></tr>
+      <tr class="rounds"><th class="corner" scope="col">Pos</th>${[1,2,3,4,5,6,7].map(r=>`<th scope="col">R${r}</th>`).join('')}</tr>
+    </thead>`;
+  const tb=document.createElement('tbody');
+  DATA.rows.forEach((pos,ri)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<th scope="row">${pos}</th>`;
+    d.matrix[ri].forEach((v,ci)=>{
+      const td=document.createElement('td');
+      const round=ci+1;
+      if(v===0){ td.className='empty'; }
+      else{
+        const a=(0.12 + 0.73*(v/max)).toFixed(3);
+        td.style.setProperty('--a',a);
+        td.textContent=v;
+        if(ri===peakR && ci===peakC) td.classList.add('peak');
+      }
+      td.tabIndex=0;
+      td.dataset.gm=gm; td.dataset.pos=pos; td.dataset.round=round; td.dataset.v=v;
+      const label=`${gm} — ${pos}, Round ${round} (${DAYOF(round)}): ${v} pick${v===1?'':'s'}`;
+      td.setAttribute('aria-label',label);
+      td.title=label;
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  table.appendChild(tb);
+  panel.appendChild(table);
+  panels.appendChild(panel);
+}
+
+// custom tooltip
+const tip=document.getElementById('tip');
+const th=tip.querySelector('.t-h'), ts=tip.querySelector('.t-s');
+function showTip(td){
+  const {gm,pos,round,v}=td.dataset;
+  th.textContent=`${pos} · Round ${round}`;
+  ts.innerHTML=`${gm} &nbsp;·&nbsp; <b>${v}</b> pick${v==='1'?'':'s'} &nbsp;·&nbsp; ${DAYOF(+round)}`;
+  tip.style.opacity='1'; tip.style.transform='translateY(0)'; tip.setAttribute('aria-hidden','false');
+}
+function moveTip(e){
+  const pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
+  let x=e.clientX+pad, y=e.clientY+pad;
+  if(x+w>innerWidth-8) x=e.clientX-w-pad;
+  if(y+h>innerHeight-8) y=e.clientY-h-pad;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+function hideTip(){ tip.style.opacity='0'; tip.style.transform='translateY(4px)'; tip.setAttribute('aria-hidden','true'); }
+document.addEventListener('mouseover',e=>{ const td=e.target.closest('td'); if(td) showTip(td); });
+document.addEventListener('mousemove',e=>{ if(tip.style.opacity==='1') moveTip(e); });
+document.addEventListener('mouseout',e=>{ if(e.target.closest('td')) hideTip(); });
+document.addEventListener('focusin',e=>{ const td=e.target.closest('td'); if(td){ const r=td.getBoundingClientRect(); showTip(td); tip.style.left=r.right+8+'px'; tip.style.top=r.top+'px'; }});
+document.addEventListener('focusout',hideTip);
+</script>
