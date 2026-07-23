@@ -12,6 +12,7 @@ import CoachingReports from './components/CoachingReports';
 import PlayerRankingMatrix from './components/PlayerRankingMatrix';
 import CitedSources from './components/CitedSources';
 import DraftClassOverview from './components/DraftClassOverview';
+import GMProfiles from './components/GMProfiles';
 import { 
   Award, Trophy, ClipboardList, Layers, Settings, Users, 
   Sparkles, Clock, RefreshCcw, HelpCircle, Flame, Plus, Menu, X, ArrowUpRight,
@@ -23,7 +24,7 @@ export default function App() {
   // Database States
   const [players, setPlayers] = useState<Player[]>([]);
   const [rankings, setRankings] = useState<Record<string, string[]>>({});
-  const [appMode, setAppMode] = useState<'boards' | 'draft_sim' | 'compare' | 'team_reports' | 'coaching_reports' | 'scouting_matrix' | 'overview'>('boards');
+  const [appMode, setAppMode] = useState<'boards' | 'draft_sim' | 'compare' | 'team_reports' | 'coaching_reports' | 'scouting_matrix' | 'overview' | 'gm_profiles'>('boards');
   
   // Selection States
   const [activeBoardKey, setActiveBoardKey] = useState<string>('league'); // "league", "team_GB", "pos_QB", etc.
@@ -654,6 +655,7 @@ export default function App() {
                 { id: 'team_reports', label: 'Team Reports' },
                 { id: 'coaching_reports', label: 'Coaching Reports' },
                 { id: 'scouting_matrix', label: 'Scouting Matrix' },
+                { id: 'gm_profiles', label: 'GM Profiles' },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -1215,6 +1217,10 @@ export default function App() {
               players={players}
               onSelectPlayer={setSelectedPlayer}
             />
+          )}
+
+          {appMode === 'gm_profiles' && (
+            <GMProfiles />
           )}
 
           {/* Dynamic Source Citations Segment */}
