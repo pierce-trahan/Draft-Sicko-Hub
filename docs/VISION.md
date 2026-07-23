@@ -167,7 +167,7 @@ Ordered to lock the spine before adding surface area.
 - [x] Add the gut-vs-grades comparison view (the core learning payoff).
 
 **Phase 2 — Depth on evaluation**
-- [ ] Position-aware trait model (per-position traits + weighting, richer radar) → [`docs/specs/03`](specs/03-position-aware-trait-model.md). Also aligns Comparer + Player Profile.
+- [x] Position-aware trait model (per-position traits + weighting, richer radar) → [`docs/specs/03`](specs/03-position-aware-trait-model.md) ✅ **Landed** (aligns Comparer + Player Profile). T-1 trait content still to author with the user.
 - [ ] **Positional Usage & Projection** → [`docs/specs/04`](specs/04-positional-usage-projection.md) — avenues of usage + predictive best-scheme/formation-spot for tweener/`FLEX` prospects. Depends on Spec 03 + `SCHEMES`.
 - [ ] **Athletic Profile & Outlier Metric** *(Phase 2.5)* → [`docs/specs/05`](specs/05-athletic-profile-outlier-metric.md) — combine/RAS athleticism + "toolsy reach vs. production." Captures the Baalke fingerprint; feeds 03/04/02.
 

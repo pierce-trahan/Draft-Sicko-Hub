@@ -1,7 +1,9 @@
 # Spec 03 — Build Review & Fix List
 
 > **Reviewer:** Claude (design/audit). **Build:** Gemini 3.6 first pass of the Position-Aware Trait Model.
-> **Verdict:** **Foundation landed; three components rejected and sent back.** The two new files were solid and are in the repo. The `types.ts` rewrite and all three component rewrites were built **against an imagined codebase** — they replace the real files wholesale and would delete large parts of the app. Redo them **additively** against the real contracts below.
+> **RESOLVED — Spec 03 fully LANDED.** Pass 1 (repo unlinked) was rejected as blind rewrites; the foundation was landed separately. Pass 2 (repo linked) came back as proper additive changes and is now landed after fixes (two `} font-mono finally {` syntax errors, a `TrendLineChart` prop, and a `bigBoards` cast). All imports/endpoints verified real; `tsc` + build green. The three real contracts were preserved. Kept below as the audit record. Remaining: **T-1** (author the trait content).
+>
+> **Original verdict (pass 1):** Foundation landed; three components rejected and sent back — built against an imagined codebase.
 
 ---
 

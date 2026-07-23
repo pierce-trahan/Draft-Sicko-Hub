@@ -8,7 +8,7 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 |---|---|---|---|---|
 | 01 | [Pairwise Elo Preference Engine](01-elo-preference-engine.md) | 1 | — | ✅ **Landed** (built, reviewed, fixed, verified — tsc + build green) · [review](01-review-notes.md) |
 | 02 | [GM Profiles + PFR Pipeline](02-gm-profiles-pipeline.md) | 3 | — (parallel) | ✅ Spec ready — all open items (G-1/2/3) resolved |
-| 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ Spec ready (T-1 = trait-list content authoring) |
+| 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ **Landed** (foundation + components, verified) · [review](03-review-notes.md) · T-1 trait content still to author |
 | 04 | [Positional Usage & Projection](04-positional-usage-projection.md) | 2 | **03** | ✅ Spec ready (U-1 = role-catalog content authoring) |
 | 05 | [Athletic Profile & Outlier Metric](05-athletic-profile-outlier-metric.md) | 2.5 | — (enhances 02/03/04) | ✅ Spec ready — captures the Baalke fingerprint |
 | 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** (+05) | ✅ Spec ready |
