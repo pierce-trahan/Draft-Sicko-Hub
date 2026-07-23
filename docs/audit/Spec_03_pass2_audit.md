@@ -3,7 +3,21 @@
 **Audited artifact:** `Spec_03_pass_2.md` (Gemini 3.6, pass 2 — response to the pass-1 audit)
 **Audited against:** repo @ branch `claude/gemini-specs-02-04-audit-maj9k4` (base `main`), verified live
 **Date:** 2026-07-23
-**Auditor verdict:** 🔴 **Still will not compile.** Pass 2 correctly cleaned up 4 of the pass-1 findings (import path, two syntax errors, radar theming, fallback default). But the **single biggest blocker is unaddressed** — and worse, pass 2 now *asserts it is fixed* when it is not. The "landed foundation" it claims to import from **does not exist in the repository.** This is a documentation regression: false green-checks over a real blocker.
+**Auditor verdict (original, at time of pass-2 review):** 🔴 **Still will not compile.** Pass 2 correctly cleaned up 4 of the pass-1 findings (import path, two syntax errors, radar theming, fallback default). But the **single biggest blocker is unaddressed** — and worse, pass 2 now *asserts it is fixed* when it is not. The "landed foundation" it claims to import from **does not exist in the repository.** This is a documentation regression: false green-checks over a real blocker.
+
+> ### 🟢 UPDATE — foundation now landed (commit `b94da05`)
+> The blocker below has since been **resolved by building the foundation in-repo** (it could not be
+> authored by Gemini, which only emits text). `src/types.ts` (`Player.positionTraits`),
+> `src/data/traitSchemas.ts`, and `src/utils/traitGrading.ts` now exist and are verified:
+> full-project `tsc --noEmit` passes with **0 errors**, and a contract-check mirroring every pass-2
+> component call site typechecks clean. **Pass-2's `RadarChart` / `PlayerProfileModal` /
+> `PlayerComparer` will now compile against the repo with no import changes.** See
+> [`Spec_03_foundation_reference.md`](./Spec_03_foundation_reference.md) for the API contract, the
+> real sub-trait keys, and the file URLs. The §2 analysis below is retained as the historical record
+> of *why* pass 2 alone was insufficient.
+>
+> **Revised verdict:** 🟢 Pass-2 components are unblocked; the remaining work is data/seed
+> (populating `positionTraits`) plus reworking Spec 04 to the real keys — not a compile blocker.
 
 ---
 
@@ -16,12 +30,13 @@
 | §1.6 `} font-mono finally {` in `PlayerComparer.tsx` | 🔴 | ✅ **FIXED** | Now `} finally {` (line 1673); also removed the dead `playersContext` variable. |
 | §3.1 RadarChart hardcoded hex colors (not theme-aware) | 🟡 | ✅ **FIXED (mostly)** | Grid/spokes/labels now use `currentColor` + `text-slate-*`. One residual hardcode remains: vertex-dot `stroke="#0F172A"` (line 183) — cosmetic only. |
 | §3.2 Inconsistent absent-trait fallback (50 vs 70) | 🟡 | ✅ **FIXED** | All three files now use `?? 70` uniformly; `RadarChart.getValue` returns `70`. |
-| **§1.1 Missing module `src/utils/traitGrading.ts`** | 🔴 | ❌ **NOT FIXED** | File still absent (verified `MISSING`). All three components still `import { ... } from '../utils/traitGrading'`. |
-| **§1.2 Missing module `src/data/traitSchemas.ts`** | 🔴 | ❌ **NOT FIXED** | File still absent (verified `MISSING`). |
-| **§1.4 `Player.positionTraits` not on the type** | 🔴 | ❌ **NOT FIXED** | `grep positionTraits src/types.ts` → not present. Components still read/write `editedPlayer.positionTraits` / `player.positionTraits`. |
-| §2.1 `pillarRollup` / `computePositionGrade` math unspecified | 🟠 | ❌ **NOT FIXED** | Still no source for these; contract remains unverifiable (blocked by §1.1). |
+| **§1.1 Missing module `src/utils/traitGrading.ts`** | 🔴 | ✅ **RESOLVED (`b94da05`)** | Was absent at pass-2 review; now authored in-repo with all six exports. |
+| **§1.2 Missing module `src/data/traitSchemas.ts`** | 🔴 | ✅ **RESOLVED (`b94da05`)** | Was absent at pass-2 review; now authored (12 positions). |
+| **§1.4 `Player.positionTraits` not on the type** | 🔴 | ✅ **RESOLVED (`b94da05`)** | Now `positionTraits?: Record<string, number>` on `Player`. |
+| §2.1 `pillarRollup` / `computePositionGrade` math unspecified | 🟠 | ✅ **RESOLVED (`b94da05`)** | Both now have defined, testable implementations (weighted rollup / weighted average, clamped 50..99). |
 
-**Net: 5 fixed, 4 outstanding — and the 4 outstanding are the ones that actually prevent the build.**
+**Net at pass-2 review: 5 fixed by Gemini, 4 outstanding (all build-blockers). The 4 outstanding
+were subsequently resolved in-repo at commit `b94da05` — see the UPDATE banner above.**
 
 ---
 
@@ -103,13 +118,18 @@ Until items 1–3 exist, pass 2's components cannot type-check regardless of how
 
 ## 5. Bottom line
 
-Pass 2 is a genuine improvement on the **surface** findings (import path, syntax, theming, fallback
-— all correctly resolved). But it does **not** move Spec 03 to compilable: the foundation
-(`traitSchemas.ts`, `traitGrading.ts`, `Player.positionTraits`) is still missing and is now
+Pass 2 was a genuine improvement on the **surface** findings (import path, syntax, theming, fallback
+— all correctly resolved), but on its own did **not** move Spec 03 to compilable: the foundation
+(`traitSchemas.ts`, `traitGrading.ts`, `Player.positionTraits`) was still missing and was
 incorrectly reported as landed.
 
-**Next instruction for Gemini:** *"Do not re-emit the three components. Emit the foundation you
-claimed was landed: the full source of `src/data/traitSchemas.ts`, `src/utils/traitGrading.ts`
-(all six exports), and the one-line `Player.positionTraits?` extension to `src/types.ts` — as real
-code. Then confirm `getSchema`'s return shape (`{key,label,pillar,weight}`) matches how the
-components consume it."* Only after that does a pass-3 `tsc` claim become checkable.
+**That gap is now closed.** Because Gemini can only emit text (not write repo files), the foundation
+was authored directly in the repo at commit `b94da05` and verified (`tsc` clean; contract-check
+against every pass-2 call site clean). Pass-2's three components will now compile with no import
+changes.
+
+**Next instruction for Gemini** (superseding the original ask to emit the foundation — that's done):
+*"The foundation is landed; read it at the URLs in `Spec_03_foundation_reference.md` and import from
+it unchanged. Do not reinvent trait keys. Next, rework **Spec 04**: rebuild `ROLE_CATALOG`
+`rewardedTraits` from the real per-position sub-trait keys, and remap scheme IDs to the real
+`SCHEMES` ids (`westcoast, spread, zoneblock, gapblock, 34defense, 43defense, pressman, quarters`)."*
