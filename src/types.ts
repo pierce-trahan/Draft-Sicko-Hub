@@ -43,6 +43,10 @@ export interface Player {
   gradeHistory?: GradeHistoryPoint[];
   labels?: string[];
   photoUrl?: string;
+  // Spec 03 — Position-Aware Trait System.
+  // Optional map of position sub-trait key -> 50..99 score. Absent keys fall
+  // back to the owning 5-pillar value (see src/utils/traitGrading.ts).
+  positionTraits?: Record<string, number>;
 }
 
 export interface Team {
