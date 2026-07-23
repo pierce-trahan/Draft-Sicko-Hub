@@ -95,3 +95,19 @@ the pillar value.
 3. **Design note (not a bug):** the schema weights, sub-trait choices, and the 0.16 "key" threshold
    are reasonable defaults chosen here — the user can tune them later. If you want different
    sub-traits, propose them as an edit to `traitSchemas.ts`, not as new invented keys in a consumer.
+
+---
+
+## 5. ⚠️ Critical: `PlayerProfileModal.tsx` must be ONE merged file
+
+Both Spec 03 and Spec 04 modify **the same file**, `src/components/PlayerProfileModal.tsx`:
+Spec 03 adds the position sub-trait breakdown (sliders, computed grade, top/bottom traits), and
+Spec 04 adds the positional usage & scheme-projection section (primary role, ranked avenues,
+`userEdited` lock, reset).
+
+**Do not emit two separate full versions of this file.** If Spec 03's version and Spec 04's version
+are pasted one after another, the second silently overwrites the first and one whole feature is lost.
+
+Deliver `PlayerProfileModal.tsx` **exactly once**, as a single merged component that contains **both**
+sections in one file, with one import block and one default export. When you emit it, state clearly
+that it is the combined Spec 03 + Spec 04 version so it is assembled once, not twice.
