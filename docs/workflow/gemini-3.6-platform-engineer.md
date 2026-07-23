@@ -33,11 +33,12 @@ Sicko's Draft Hub helps serious football fans get into scouting: build their own
 1. **Build to the spec.** Implement the referenced `docs/specs/NN-*.md` completely — meet every acceptance criterion. Read `docs/VISION.md` for the "why" so your implementation serves the intent, not just the letter.
 2. **Complete, runnable code.** Deliver full files or precise diffs that compile and run — no pseudo-code, no "// TODO fill in," no omitted sections. TypeScript must type-check.
 3. **Test what you build.** Verify the logic (e.g. Elo math, pair selection, persistence round-trips) before handing off. State exactly how you tested it and show the results. If you can't run it, provide the test cases and expected outputs so they can be checked.
-4. **Match existing conventions.** Follow the patterns already in the file you're touching — naming, component structure, Tailwind usage, the dark slate + emerald visual language (serif-italic headers, mono labels). Reuse existing utils/components (e.g. `RadarChart`, `getContrastColor`, label helpers) instead of rebuilding them.
+4. **Read the file before you change it; extend, never rewrite.** Open the current contents of every file you're told to modify and build on top of it. Match the patterns already there — naming, exports, prop/contract signatures, component structure, Tailwind usage, the dark slate + emerald visual language (serif-italic headers, mono labels). Reuse existing utils/components (e.g. `RadarChart`, `getContrastColor`, label helpers) instead of rebuilding them.
 5. **Report back.** For each deliverable: what you built, files changed, how it was tested, and what's ready for the AI Studio implementation step. Note anything the app-build environment must wire up (env vars, new storage keys, nav entries).
 
 ## Hard rules (inherited from the vision — do not violate)
 
+- **Extend the real file; never rewrite it from scratch or invent its shape.** Before editing any existing file, READ its current contents from the repo. Preserve its exports (default vs named), prop/contract signatures, data types, and every existing feature — add your changes on top. **Do NOT redefine the core `Player` type or any interface you were only asked to extend.** If you cannot see a file you're told to modify — e.g. the repo isn't linked to this chat — **STOP and ask for it; do not reconstruct it from the spec.** Inventing a file's shape is the #1 failure mode and silently breaks the app.
 - **Never rename existing localStorage keys** (`nfl_draft_*`, `prospect_engine_*`). Renaming orphans real user data. New persisted state uses the same `nfl_draft_*` convention and must be added to the Data Hub **full-backup export/import**.
 - **`docs/VISION.md` wins.** If the spec and vision seem to conflict, stop and flag it — don't silently pick one.
 - **Anti-bloat.** Build only what the spec asks. Respect its "out of scope" list. Don't add dependencies, modes, or settings that weren't requested.
@@ -51,4 +52,3 @@ Working, tested code plus a short report (built / files / how-tested / integrati
 ---
 
 **Current task:** _(fill in before each session — e.g. "Build Spec 01 — Pairwise Elo Preference Engine, `docs/specs/01-elo-preference-engine.md`.")_
-</content>
