@@ -20,6 +20,7 @@ This covers: a spec handed to the Gemini Platform Engineer, any correction / Pas
 2. **Every ad-hoc handoff prompt** (corrections, review notes, sync tasks, Pass-N) ends with the same raw-URL list for every file it names.
 3. **URL form:** `https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/<ref>/<path>`. The URL must **resolve at send time** — use `main` for docs already merged, or the current feature branch for docs not yet merged. If a referenced file isn't pushed anywhere yet, push it first (or flag it explicitly) — never let the engineer predict it.
 4. **Never** hand off a doc or file to engineering by name alone. Name + raw URL, every time.
+5. **Single source = the spec's Build-context table.** For a build handoff, the file URLs live only in that spec's "Build context" table. The handoff message just **names the spec and gives its raw URL**; the engineer instructions point the builder there. Do **not** stand up a separate per-session instructions doc or a "current task" line to hold URLs — that split is what let URLs land where the builder wasn't told to look. My job each handoff: make sure the spec's table is complete, then send the spec name + its raw URL.
 
 If I'm about to send anything toward Gemini/AI Studio, I check this rule first.
 
