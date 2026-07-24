@@ -1,4 +1,5 @@
 import { GMDraftPick, GMProfile, GMTendencies } from '../types';
+import { GM_PICK_ATHLETIC_SCORE } from '../data/gmPickAthletics';
 
 export function getPickDraftValue(pickNumber: number): number {
   if (pickNumber <= 1) return 3000;
@@ -84,6 +85,18 @@ export function computeGMTendencies(
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
+  // Spec 05 — athletic lean: mean combine athletic score across picks we could
+  // join to nflverse combine data. Only reported when at least 3 picks matched.
+  const athleticScores = filteredPicks
+    .map((p) => GM_PICK_ATHLETIC_SCORE[`${p.playerName}|${p.year}`])
+    .filter((s): s is number => typeof s === 'number');
+  let athleticLean: GMTendencies['athleticLean'];
+  if (athleticScores.length >= 3) {
+    const avgScore = Math.round((athleticScores.reduce((s, v) => s + v, 0) / athleticScores.length) * 10) / 10;
+    const elitePct = Math.round((athleticScores.filter((s) => s >= 8).length / athleticScores.length) * 100);
+    athleticLean = { avgScore, elitePct, matchedCount: athleticScores.length, totalCount: totalPicks };
+  }
+
   return {
     totalPicks,
     positionCounts,
@@ -93,5 +106,6 @@ export function computeGMTendencies(
     r1LeanText,
     earlyRoundPriorities,
     topColleges,
+    athleticLean,
   };
 }

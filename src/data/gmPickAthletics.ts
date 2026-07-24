@@ -1,0 +1,37 @@
+// AUTO-GENERATED — per-pick RAS-style athletic score (0..10, size-inclusive)
+// for GM draft picks, joined from nflverse combine (CC-BY 4.0).
+// Key = `${playerName}|${year}`. Derived score only.
+
+export const GM_PICK_ATHLETIC_SCORE: Record<string, number> = {
+  "A.J. Jenkins|2012": 5.3,
+  "Aldon Smith|2011": 4.9,
+  "Andru Phillips|2024": 6.2,
+  "Anton Harrison|2023": 5.3,
+  "Arik Armstead|2015": 4.8,
+  "Brandon Graham|2010": 5.9,
+  "Brian Thomas Jr.|2024": 7.0,
+  "Carson Wentz|2016": 7.7,
+  "Colin Kaepernick|2011": 8.2,
+  "Daniel Te'o-Nesheim|2010": 7.3,
+  "Danny Watkins|2011": 4.4,
+  "DeForest Buckner|2016": 4.5,
+  "Deonte Banks|2023": 8.2,
+  "Devin Lloyd|2022": 6.9,
+  "Eric Reid|2013": 6.7,
+  "Fletcher Cox|2012": 6.0,
+  "Jalen Hurts|2020": 6.8,
+  "Jalin Hyatt|2023": 6.2,
+  "Jason Kelce|2011": 6.9,
+  "Jimmie Ward|2014": 1.5,
+  "Jordan Davis|2022": 9.2,
+  "Joshua Ezeudu|2022": 5.7,
+  "Kayvon Thibodeaux|2022": 7.0,
+  "Lane Johnson|2013": 7.7,
+  "Nate Allen|2010": 4.9,
+  "Nick Foles|2012": 5.7,
+  "Nolan Smith|2023": 6.6,
+  "Quinyon Mitchell|2024": 7.0,
+  "Travis Etienne|2021": 5.4,
+  "Travon Walker|2022": 8.1,
+  "Zach Ertz|2013": 4.4,
+};
