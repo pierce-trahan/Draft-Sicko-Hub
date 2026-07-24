@@ -9,7 +9,7 @@
 
 | Need | Primary source | License / access | Redistributable? |
 |---|---|---|---|
-| **NFL draft picks (since 1980), combine, rosters, contracts, depth charts, PBP** | **nflverse** (`nflreadr` / `nflreadpy` / `nfl_data_py`) | Data **CC-BY 4.0** (FTN parts CC-BY-SA 4.0); code MIT | ✅ Yes, with attribution |
+| **NFL draft picks (since 1980), combine, rosters, contracts, depth charts, PBP** | **nflverse** (`nflreadr` R / `nflreadpy` Python) | Data **CC-BY 4.0** (FTN parts CC-BY-SA 4.0); code MIT | ✅ Yes, with attribution |
 | **Public Next Gen Stats aggregates** | **nflverse** `load_nextgen_stats()` | CC-BY 4.0 | ✅ Yes, with attribution |
 | **College stats, recruiting rankings, rosters** | **CFBD** — collegefootballdata.com (API or `cfbfastR`) | API-key; free 1k calls/mo, Patreon tiers | ⚠️ Confirm terms before redistributing |
 | **Athleticism (combine/pro-day) 0–10 by position, since 1987** | **RAS** — ras.football (Kent Lee Platte / "MathBomb") | Free to view/share cards **with attribution**; bulk DB behind premium | ⚠️ Attribution required; bulk = premium |
@@ -21,7 +21,7 @@
 
 ## 1. NFL data — nflverse (the spine)
 
-The de-facto open NFL analytics ecosystem. Access via **`nflreadr`** (R), **`nflreadpy`** (Python port), or **`nfl_data_py`** (Python).
+The de-facto open NFL analytics ecosystem. Access via **`nflreadr`** (R) or **`nflreadpy`** (the maintained Python port). ⚠️ **`nfl_data_py` is deprecated** — the project directs new work to `nflreadpy`; don't build the pipeline around `nfl_data_py`.
 
 - **Draft picks:** every pick since **1980** (`load_draft_picks()`), sourced from PFR but redistributed under CC-BY.
 - **Combine:** results by year/position (`load_combine()`).
@@ -30,6 +30,12 @@ The de-facto open NFL analytics ecosystem. Access via **`nflreadr`** (R), **`nfl
 - **License:** the majority of nflverse data is **CC-BY 4.0** (FTN participation data is CC-BY-SA 4.0). The package code is MIT. CC-BY **allows redistribution with attribution** — exactly what an open tool needs. Credit "Data via nflverse."
 
 **Why it matters for us:** this **resolves G-1 at scale.** Instead of scraping PFR for 32 teams of draft history, pull `load_draft_picks()` (redistribution-friendly) and use PFR only for the GM-by-year mapping.
+
+### FTN charting — DECIDED: out of v1 (cleaner license story)
+
+FTN participation/charting data is **CC-BY-SA 4.0** (ShareAlike), unlike the rest of nflverse (**CC-BY 4.0**). ShareAlike can require any dataset we *derive* from FTN to also be licensed CC-BY-SA — which muddies an otherwise clean **MIT-code + CC-BY-data** repo and complicates forks.
+
+**Decision:** **do not use FTN in v1.** For the personnel/formation data we actually need (the F-3 data-derived path for formation usage/EPA), use **nflverse `load_participation()`** — it tags every play's `offense_personnel` / `defense_personnel` and is **CC-BY 4.0**, keeping the whole data layer under one permissive license. Revisit FTN later *only* behind a clearly separated, SA-aware data folder if we ever need a charting field participation data doesn't carry. (Tracked as decision **D-1** in VISION §11.)
 
 ## 2. College data — CFBD + SportsDataverse
 

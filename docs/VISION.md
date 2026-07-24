@@ -16,6 +16,7 @@ This is a **learning instrument**, not just a ranking generator. The point is to
 - Form and defend real opinions on players before their NFL careers play out.
 - Learn your own tendencies — what traits/archetypes/positions you gravitate to, and where your blind spots are.
 - Absorb the nuance of the sport: schemes, organizational philosophy, positional value, how GMs and coaches actually think.
+- **Test narrative against data.** Hold the popular scouting/GM/media narratives up to the actual numbers — and learn where consensus belief *isn't* borne out. The gap between what people repeat and what the data shows is itself the lesson. The mission is to **merge public perception toward reality through education.**
 
 It should reflect the user's own practice back at them so they get *better at scouting*, not just faster at making a list.
 
@@ -41,6 +42,7 @@ These exist to prevent the exact thing the scattered competitor tools suffer fro
 4. **Learning is a first-class output.** Wherever possible, surface *insight about the evaluator* (your gut vs. your grades, your positional biases over time), not just about the players.
 5. **One mechanic, done fully.** Prefer finishing a feature to its real depth over adding a shallow new one. A half-built module is worse than a missing one.
 6. **The number is sacred — don't hide it.** Where a competitor removes/obscures a useful output, we keep and surface it (with context).
+7. **Unbiased signal over narrative.** Trends emerge from the data; we never tune weights or metrics to reproduce a popular belief. Where the numbers contradict consensus, that gap *is* the product — surface it, don't sand it down. (See §7 — the Baalke case.)
 
 ---
 
@@ -111,6 +113,8 @@ Big Board Lab's own description: *"pick between two players at a time and an Elo
 ### Intent
 A GM entity capturing **historical draft tendencies**: which positions they take by round, favored archetypes/traits, reach-vs-value patterns, tendencies over their tenure. This lets a user contextualize prospects against *how a real decision-maker actually drafts* — and feeds realistic AI-GM behavior in the simulator later.
 
+> **Data over narrative — the Baalke case (why this matters).** Trent Baalke was chosen as a subset test GM *because* he carries a strong public narrative: the "boom-bust athletic gambler." When we actually joined his picks to athletic data (Spec 05 → Spec 06), that narrative barely showed — his matched combine scores average **~5.7/10**, a weak athletic lean. What *did* emerge, unbiased, is a **defensive-trenches positional bias** (EDGE/DL early, with a poor hit rate). We deliberately do **not** nudge the athletic weighting to force the famous story. That Baalke isn't even a current GM makes him the perfect proof: he's a narrative-heavy test case, and the profile the tool produces comes from the numbers, not the story — even when the two disagree. This *is* the mission (§1): merge public perception toward reality through education.
+
 ### Data source & approach — CONFIRMED
 This is **data-derived, not hand-authored.** An **agent pulls draft history from Pro Football Reference, per team**, then sorts/filters that data; we build the GM tendency models on top of the cleaned dataset.
 
@@ -179,7 +183,7 @@ Ordered to lock the spine before adding surface area.
 **Phase 4 — Polish & publish** → [`docs/specs/07`](specs/07-open-source-packaging-publish.md)
 - [ ] License, data attributions, run-with/without-AI, self-host docs; AI Studio publish path.
 
-*(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in.)*
+*(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in. It and other deliberately-separate ideas are parked in [`docs/future-tools.md`](future-tools.md) with their blockers and integration seams.)*
 
 **Full spec index + build order:** [`docs/specs/README.md`](specs/README.md).
 
@@ -206,6 +210,9 @@ Track unresolved calls here so they don't get lost between sessions.
 | G-1 | GM acquisition / PFR ToS | ✅ **Decided** | Hybrid, no live scraping: manual CSV export (subset) + nflverse (scale); ship derived aggregates + attribution (Spec 02) |
 | G-2 | GM subset choice (which 2–3 GMs) | ✅ **Decided** | Roseman (elite), Schoen (mid), Baalke (boom-bust) — Spec 02 §A6 |
 | G-3 | Tweener position handling | ✅ **Decided** | First-class `FLEX` bucket; rich usage-projection is a separate future spec (Spec 02) |
+| G-4 | At-scale player-identity join | ✅ **Decided** | Canonical `prospect_id` + cross-source ID crosswalk (Spec 08); join on IDs, never names — build before scaling 02/05 |
+| D-1 | FTN charting data in v1 | ✅ **Decided** | **Out of v1** — FTN is CC-BY-SA; use nflverse `load_participation()` (CC-BY) for personnel/formation to keep one clean license (data-sources.md §1) |
+| D-2 | Nudge GM metrics to match public narrative? | ✅ **Decided — No** | Never tune weights/metrics to reproduce a media/fan narrative. Ship the unbiased trend; where it contradicts consensus, that's the lesson. Baalke: measured athletic lean is weak (~5.7); the real signal is a defensive-trench positional bias (§7; Spec 02 §A6; Spec 06 review S-5) |
 
 ---
 
