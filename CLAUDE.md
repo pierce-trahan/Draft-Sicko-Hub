@@ -26,6 +26,31 @@ If I'm about to send anything toward Gemini/AI Studio, I check this rule first.
 
 ---
 
+## 🔁 POST-IMPLEMENTATION-PASS REGRESSION CHECK (run every time)
+
+**After every implementation pass comes back** (Gemini build, AI Studio app-build output, or any code I integrate), run this **before** reviewing the feature itself. The AI Studio environment's documented failure mode is *regenerating* files — so it can silently re-inject its boilerplate and revert branding that isn't part of the task.
+
+```bash
+# 1. AI Studio boilerplate re-injected / branding reverted?  (expect: no output)
+grep -rniE "ai\.google\.dev|ai\.studio/apps|Run and deploy your AI Studio|GHBanner|react-example|ProspectEngine // V" \
+  README.md index.html metadata.json package.json src/
+
+# 2. localStorage keys still intact?  (expect: TeamReports.tsx, App.tsx, elo.ts)
+grep -rl "prospect_engine_\|nfl_draft_" src/
+
+# 3. Still compiles/builds
+npm run lint && npm run build
+```
+
+**What each catches:**
+- **Boilerplate/branding revert** — the `ai.google.dev` README banner graphic, "Run and deploy your AI Studio app", the `ai.studio/apps/...` link, `package.json` → `react-example`, `index.html` → `ProspectEngine // V2.4`, `metadata.json` → the old tool name. All of these were real and had to be fixed once already.
+- **Storage-key renames** — the most damaging regression, since it orphans real user data. Keys must stay `prospect_engine_*` / `nfl_draft_*`.
+- **Scope creep in general** — diff anything the task didn't ask for; an implementation pass should touch only its named anchors.
+
+Two legitimate `ProspectEngine` mentions remain by design (import blurb + validation error, telling users older exports still work) — those are the only ones that should ever match a plain `ProspectEngine` search.
+
+---
+
 ## Other standing guardrails (from VISION §3 / workflow non-negotiables)
 
 - **`docs/VISION.md` wins.** If code and vision disagree, fix one on purpose — no silent drift.

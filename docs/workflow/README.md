@@ -24,7 +24,18 @@ Three roles, one pipeline. Each role has a lane; work flows left to right, and p
 1. **Design (Claude).** A feature gets a spec in `docs/specs/NN-*.md`, precise enough to build from — intent → mechanic → data model → acceptance criteria → out-of-scope. Product decisions are resolved here (or logged as open in `docs/VISION.md` §11).
 2. **Build & test (Gemini 3.6).** The platform engineer implements the spec as complete, runnable code, tests it in the chat/build sandbox, and reports what it built + how it was verified. Spec ambiguities go *back* to Claude/the user — they are not resolved by guessing.
 3. **Integrate & ship (AI Studio app build).** The implementation engineer wires the tested pieces into the product inside AI Studio, handles environment/config (`GEMINI_API_KEY`), and gets it to a runnable/publishable state. Integration problems go *back* to the platform engineer.
-4. **Review (Claude).** Claude audits the result against the spec and the design tenets, and either accepts or writes the next spec / fix note.
+4. **Review (Claude).** Claude first runs the **post-pass regression check** (below), then audits the result against the spec and the design tenets, and either accepts or writes the next spec / fix note.
+
+### Post-implementation-pass regression check (every pass, before the feature review)
+
+The AI Studio app-build environment's failure mode is **regenerating files** — so any pass can silently re-inject its boilerplate or revert branding the task never mentioned. Check first, review second:
+
+1. **AI Studio boilerplate / branding revert** — the `ai.google.dev` README banner graphic, "Run and deploy your AI Studio app", `ai.studio/apps/...` links, `package.json` → `react-example`, `index.html` → `ProspectEngine // V2.4`, `metadata.json` → the old tool name. (All were real regressions that had to be fixed once already.)
+2. **localStorage keys intact** — `prospect_engine_*` / `nfl_draft_*` must never be renamed; renaming orphans real user data.
+3. **Builds clean** — `npm run lint` (`tsc --noEmit`) + `npm run build`.
+4. **No scope creep** — the diff should touch only the anchors the task named.
+
+Exact commands live in the root [`CLAUDE.md`](../../CLAUDE.md).
 
 ## 🔴 The Engineering Handoff URL Rule (non-negotiable)
 
