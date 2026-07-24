@@ -52,6 +52,7 @@ Gemini reproduced `DraftSimulator.tsx` as a whole new file. The real file is **2
 ## Open decisions for the user (before Pass 2)
 
 - **S-4 — Athletic signal source. ✅ DECIDED — (a):** bias on **pool-relative `traits.athleticism`** this pass (no new data); unblocks Spec 06. Option (b) — populate prospect `athleticProfile.athleticScore`/`percentiles` per Spec 05 and bias on that — is a small later follow-up, not Pass 2.
+- **S-5 — Baalke athletic-skew calibration. ✅ DECIDED — no nudging.** With real data, Baalke's athletic lean is weak (matched combine avg ~5.7 → `athleticLeanStrength` ≈ 0.14; the "athletic outlier" rationale, threshold 0.3, won't fire for him). We deliberately do **not** lower thresholds or rebaseline to force the "athletic gambler" narrative. His differentiation comes honestly from **position-share bias** (defensive trenches). The unbiased trend is the intended output — the whole point of the tool (VISION §7 + §11 D-2; Spec 02 §A6). This is a validation of the design, not a bug to tune away.
 
 ## Definition of done (Pass 2)
 

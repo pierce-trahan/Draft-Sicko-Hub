@@ -77,7 +77,7 @@ Run the full extract → attribute → transform → load flow end-to-end on **t
 
 Validate attribution, franchise-code mapping (Baalke spans SF + JAX), position normalization, and aggregation **before** scaling to all 32 teams / full history.
 
-> **Expectation-setting on Baalke:** his signature tendency — betting on *outlier athletes whose production lagged their traits* — is the **archetype/trait lean** metric marked out of scope in §B3 (needs athletic + production data PFR pick tables don't carry). v1 will surface his *positional / round / college* patterns, not the athletic-gamble fingerprint. **Future thread:** a follow-up spec joining draft picks to **historical combine measurables** (available via PFR combine / nflverse) would quantify "toolsy reach" and finally capture this. Note it; don't build it in v1.
+> **Expectation-setting on Baalke — UPDATED with the measured result.** His *narrative* signature — betting on *outlier athletes whose production lagged their traits* — was the archetype/athletic lean deferred from v1 (§B3). That lean has since been measured (Spec 05 `athleticLean`, consumed by Spec 06): **it's weak.** Baalke's matched combine picks average **~5.7/10** — barely above midpoint — so the "athletic gambler" fingerprint does **not** strongly emerge from the numbers. What *does* emerge is a **defensive-trenches positional bias** (EDGE/DL early, poor hit rate). **Decision (VISION §11 D-2):** we do **not** nudge weights to force the famous narrative. This is a feature, not a gap — Baalke was chosen as a narrative-heavy test case precisely to check whether the data backs the story, and here it largely doesn't. Surfacing that honestly is the point (VISION §7). Baalke is also no longer an active GM — purely a test case.
 
 ---
 
