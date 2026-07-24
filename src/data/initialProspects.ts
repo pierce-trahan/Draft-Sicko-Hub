@@ -15,6 +15,8 @@ const ATHLETIC_SEEDS: Record<string, AthleticMeasurables> = {
   'arch-manning':      { heightIn: 76, weightLb: 225, forty: 4.72, vertical: 31, broad: 114, armIn: 31, handIn: 9.5 },
   'omarion-miller':    { heightIn: 74, weightLb: 195, forty: 4.35, tenSplit: 1.49, vertical: 40, broad: 134, threeCone: 6.75, twentyShuttle: 4.05, bench: 14, armIn: 33, handIn: 9.6 },
   'mario-craver':      { heightIn: 70, weightLb: 170, forty: 4.32, tenSplit: 1.48, vertical: 39, broad: 132, threeCone: 6.8, twentyShuttle: 4.1 },
+  // Boom-or-bust toolsy WR — elite testing, production lags -> athletic outlier.
+  'kj-duff':           { heightIn: 77, weightLb: 212, forty: 4.33, tenSplit: 1.49, vertical: 43, broad: 140, threeCone: 6.7, twentyShuttle: 4.0, bench: 22, armIn: 34, handIn: 10.2 },
 };
 
 

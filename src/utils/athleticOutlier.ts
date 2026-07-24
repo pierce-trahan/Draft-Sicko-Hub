@@ -154,7 +154,9 @@ export function computeOutlier(
     };
   }
 
-  const normalizedAthletic = Math.round(score * 9.9); // 0..10 -> 0..99
+  // Map the 0..10 athletic score onto the app's 50..99 grade scale so it is
+  // directly comparable to the production/overall grade (which floors at 50).
+  const normalizedAthletic = Math.round(50 + (score / 10) * 49);
   const delta = normalizedAthletic - production;
 
   let band: OutlierBandId, label: string, rationale: string;
