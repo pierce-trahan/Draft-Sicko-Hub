@@ -7,12 +7,13 @@ import {
   Search, SlidersHorizontal, ArrowRight, CheckCircle2, 
   Sparkles, Award, User, RefreshCw, Plus, Trash2, ArrowUpRight,
   ClipboardList, ArrowLeftRight, BarChart3, Share2, Copy, Download,
-  Check, FileText, AlertTriangle, TrendingUp
+  Check, FileText, AlertTriangle, TrendingUp, Zap
 } from 'lucide-react';
 import DraftAnalyticsDashboard from './DraftAnalyticsDashboard';
 import DraftGradeSummaryModal from './DraftGradeSummaryModal';
 import DraftValueCalculator from './DraftValueCalculator';
 import { LabelDef, getLabelClasses } from '../utils/labels';
+import { selectCpuPick, getGmStrategySummary, getGmProfileForTeam } from '../utils/gmDraftStrategy';
 
 interface DraftSimulatorProps {
   players: Player[];
@@ -33,6 +34,7 @@ interface DraftSelection {
   player: Player;
   grade: string; // Selection grade (A+, A, B, etc.)
   notes: string;
+  gmName?: string; // Spec 06: the GM model that made a CPU pick (undefined for user picks)
 }
 
 // Fitzgerald-Spielberger / OverTheCap trade values
@@ -92,6 +94,9 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
   const [userControlledTeamId, setUserControlledTeamId] = useState<string>('CHI'); // Default to Chicago Bears
   const [draftSpeed, setDraftSpeed] = useState<'instant' | 'fast' | 'normal' | 'slow'>('normal');
   const [boardSource, setBoardSource] = useState<'custom' | 'consensus'>('custom');
+
+  // Spec 06: Chaos / GM realism factor (0.0 = deterministic BPA, 1.0 = high GM-flavored variance)
+  const [chaosFactor, setChaosFactor] = useState<number>(0.2);
   
   // Custom draft team needs (copied from original team definition on setup, fully customizable!)
   const [customTeamNeeds, setCustomTeamNeeds] = useState<Record<string, string[]>>({});
@@ -269,63 +274,9 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
     const teamNeeds = customTeamNeeds[team.id] || team.needs;
     const orderedList = getOrderedPlayersList();
 
-    // AI Smart-Heuristic Picker
-    let bestPlayer = available[0];
-    let bestScore = -99999;
-    let selectedReason = "Best Player Available";
-
-    available.forEach((player, index) => {
-      // 1. Baseline is the prospect's draft-class overall quality
-      let score = player.overallGrade;
-
-      // 2. Custom ranking position bonus
-      // Highly ranked players on our active board get a subtle value-multiplier
-      const boardIndex = orderedList.findIndex(p => p.id === player.id);
-      if (boardIndex !== -1) {
-        score += (orderedList.length - boardIndex) / orderedList.length * 8;
-      }
-
-      // 3. Team Needs Alignment
-      const needIndex = teamNeeds.indexOf(player.position);
-      const isMultiMatch = player.position.includes('/') && player.position.split('/').some(p => teamNeeds.includes(p));
-      
-      let hasNeed = false;
-      let needBonus = 0;
-
-      if (needIndex !== -1) {
-        hasNeed = true;
-        // Priority weight: First need gets biggest bonus
-        needBonus = 18 - (needIndex * 2);
-      } else if (isMultiMatch) {
-        hasNeed = true;
-        needBonus = 12;
-      }
-
-      score += needBonus;
-
-      // 4. Scheme Compatibility check
-      const teamSchemeObj = SCHEMES.find(s => s.name === team.currentScheme);
-      if (teamSchemeObj && teamSchemeObj.favoredPositions.includes(player.position)) {
-        score += 4;
-      }
-
-      // 5. Positional Premium weighting (QB, EDGE, OT, CB, WR are prime assets)
-      const premiumPositions = ['QB', 'EDGE', 'OT', 'CB', 'WR'];
-      if (premiumPositions.includes(player.position)) {
-        score += (player.position === 'QB' && hasNeed) ? 6 : 2.5;
-      }
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestPlayer = player;
-        
-        if (hasNeed) {
-          selectedReason = `Addressed critical need at ${player.position}`;
-        } else {
-          selectedReason = `Best Player Available (Value Pick)`;
-        }
-      }
-    });
+    // Spec 06 — GM-flavored CPU pick engine (value + need + GM position-by-round bias + athletic lean)
+    const cpuResult = selectCpuPick(available, team, currentPick.round, teamNeeds, orderedList, chaosFactor);
+    const bestPlayer = cpuResult.selectedPlayer;
 
     // Grade the selection
     // An 'A' if they picked a top need or high value. 'B' if solid value.
@@ -342,7 +293,8 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
       pick: currentPick,
       player: bestPlayer,
       grade,
-      notes: `${selectedReason}. Scouted from ${bestPlayer.school}.`
+      notes: cpuResult.rationale,
+      gmName: cpuResult.gmName,
     };
 
     setDraftSelections(prev => [...prev, newSelection]);
@@ -430,56 +382,9 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
       const team = NFL_TEAMS.find(t => t.id === currentPick.teamId)!;
       const teamNeeds = customTeamNeeds[team.id] || team.needs;
 
-      // AI Smart-Heuristic Picker
-      let bestPlayer = available[0];
-      let bestScore = -99999;
-      let selectedReason = "Best Player Available";
-
-      available.forEach((player) => {
-        let score = player.overallGrade;
-
-        const boardIndex = orderedList.findIndex(p => p.id === player.id);
-        if (boardIndex !== -1) {
-          score += (orderedList.length - boardIndex) / orderedList.length * 8;
-        }
-
-        const needIndex = teamNeeds.indexOf(player.position);
-        const isMultiMatch = player.position.includes('/') && player.position.split('/').some(p => teamNeeds.includes(p));
-        
-        let hasNeed = false;
-        let needBonus = 0;
-
-        if (needIndex !== -1) {
-          hasNeed = true;
-          needBonus = 18 - (needIndex * 2);
-        } else if (isMultiMatch) {
-          hasNeed = true;
-          needBonus = 12;
-        }
-
-        score += needBonus;
-
-        const teamSchemeObj = SCHEMES.find(s => s.name === team.currentScheme);
-        if (teamSchemeObj && teamSchemeObj.favoredPositions.includes(player.position)) {
-          score += 4;
-        }
-
-        const premiumPositions = ['QB', 'EDGE', 'OT', 'CB', 'WR'];
-        if (premiumPositions.includes(player.position)) {
-          score += (player.position === 'QB' && hasNeed) ? 6 : 2.5;
-        }
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestPlayer = player;
-          
-          if (hasNeed) {
-            selectedReason = `Addressed critical need at ${player.position}`;
-          } else {
-            selectedReason = `Best Player Available (Value Pick)`;
-          }
-        }
-      });
+      // Spec 06 — GM-flavored CPU pick engine
+      const cpuResult = selectCpuPick(available, team, currentPick.round, teamNeeds, orderedList, chaosFactor);
+      const bestPlayer = cpuResult.selectedPlayer;
 
       // Grade the selection
       const boardRank = orderedList.findIndex(p => p.id === bestPlayer.id) + 1;
@@ -495,7 +400,8 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
         pick: currentPick,
         player: bestPlayer,
         grade,
-        notes: `${selectedReason}. Scouted from ${bestPlayer.school}.`
+        notes: cpuResult.rationale,
+        gmName: cpuResult.gmName,
       };
 
       newSelections.push(newSelection);
@@ -533,7 +439,7 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [simStatus, currentPickIndex, draftSpeed, userControlledTeamId, draftPicks]);
+  }, [simStatus, currentPickIndex, draftSpeed, userControlledTeamId, draftPicks, chaosFactor]);
 
   // Reset complete simulation
   const handleResetDraft = () => {
@@ -1309,6 +1215,30 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
                 </div>
               </div>
 
+              {/* Spec 06: GM Chaos / Realism factor */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="block text-xs font-bold text-slate-400 font-mono uppercase">GM Chaos / Realism</label>
+                  <span className="text-[10px] font-mono font-bold text-emerald-400">{Math.round(chaosFactor * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={chaosFactor}
+                  onChange={(e) => setChaosFactor(parseFloat(e.target.value))}
+                  className="w-full accent-emerald-500 h-1.5 bg-slate-800 cursor-pointer"
+                />
+                <span className="text-[9px] text-slate-500 font-mono block">
+                  {chaosFactor <= 0.1
+                    ? 'Deterministic — pure board/need value'
+                    : chaosFactor <= 0.4
+                    ? 'Balanced — historical GM tendencies'
+                    : 'High draft-day chaos / variance'}
+                </span>
+              </div>
+
               <div className="pt-4">
                 <button
                   onClick={() => setSimStatus('running')}
@@ -1512,6 +1442,17 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
                     <div className="text-[11px] text-slate-400 font-mono mt-0.5">
                       Primary Needs: <span className="font-bold text-slate-200 uppercase">{(currentClockTeam ? (customTeamNeeds[currentClockTeam.id] || currentClockTeam.needs) : []).join(', ')}</span>
                     </div>
+                    {/* Spec 06: GM strategy indicator */}
+                    {currentClockTeam && (
+                      <div className="mt-1.5 flex items-start gap-1.5 text-[10px] text-slate-400 font-mono max-w-md">
+                        <Zap className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>
+                          <span className="text-slate-500">GM Model: </span>
+                          <span className="text-emerald-400 font-bold">{getGmProfileForTeam(currentClockTeam.id)?.name || 'Standard Fallback'}</span>
+                          <span className="block text-slate-500 leading-snug">{getGmStrategySummary(currentClockTeam.id)}</span>
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -1770,6 +1711,11 @@ export default function DraftSimulator({ players, orderedPlayerIds, onSelectPlay
                                 <span className="text-[10px] text-slate-500 block font-mono">
                                   {selection.notes}
                                 </span>
+                                {selection.gmName && (
+                                  <span className="text-[9px] text-emerald-500/80 block font-mono uppercase tracking-wide">
+                                    GM Model: {selection.gmName}
+                                  </span>
+                                )}
                               </div>
                             </div>
 
