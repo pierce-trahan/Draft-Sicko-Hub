@@ -1,445 +1,582 @@
-import React, { useState } from 'react';
-import { Player } from '../types';
-import { Award, Zap, ListOrdered, Calendar, ShieldAlert, ArrowRight, Layers, HelpCircle, Sparkles, Flame, ShieldCheck } from 'lucide-react';
-
-export interface DraftValueRange {
-  range: string;
-  label: string;
-  color: string;
-  bg: string;
-  border: string;
-}
-
-export function getDraftRange(grade: number): DraftValueRange {
-  if (grade >= 95) {
-    return {
-      range: "Top 5 Pick",
-      label: "Elite Franchise Cornerstone",
-      color: "text-emerald-400",
-      bg: "bg-emerald-500/10",
-      border: "border-emerald-500/30"
-    };
-  } else if (grade >= 90) {
-    return {
-      range: "Top 15 Pick",
-      label: "Blue Chip Pro Bowler",
-      color: "text-teal-400",
-      bg: "bg-teal-500/10",
-      border: "border-teal-500/30"
-    };
-  } else if (grade >= 85) {
-    return {
-      range: "1st Round",
-      label: "Day 1 High-End Starter",
-      color: "text-blue-400",
-      bg: "bg-blue-500/10",
-      border: "border-blue-500/30"
-    };
-  } else if (grade >= 80) {
-    return {
-      range: "2nd Round",
-      label: "Red Chip Contributor",
-      color: "text-indigo-400",
-      bg: "bg-indigo-500/10",
-      border: "border-indigo-500/30"
-    };
-  } else if (grade >= 75) {
-    return {
-      range: "3rd-4th Round",
-      label: "Quality Developmental Starter",
-      color: "text-purple-400",
-      bg: "bg-purple-500/10",
-      border: "border-purple-500/30"
-    };
-  } else if (grade >= 65) {
-    return {
-      range: "5th-7th Round",
-      label: "Rotational Asset / Special Teamer",
-      color: "text-amber-400",
-      bg: "bg-amber-500/10",
-      border: "border-amber-500/30"
-    };
-  } else {
-    return {
-      range: "Undrafted Free Agent",
-      label: "Priority FA / Camp Candidate",
-      color: "text-slate-400",
-      bg: "bg-slate-500/10",
-      border: "border-slate-500/20"
-    };
-  }
-}
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Player, PreferenceOutcome, PreferenceState } from '../types';
+import {
+  loadPreferenceState,
+  recordComparison,
+  undoLastComparison,
+  resetPositionPreferences,
+  selectNextPair,
+  getPositionProgress,
+  getGutVsGrades,
+  OUTCOME_SCORES,
+  DEFAULT_RATING,
+} from '../utils/elo';
+import {
+  GitCompare,
+  Trophy,
+  Brain,
+  RotateCcw,
+  SkipForward,
+  CheckCircle2,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  Sparkles,
+  Save,
+  X,
+  ExternalLink,
+} from 'lucide-react';
 
 interface PlayerRankingMatrixProps {
   players: Player[];
   onSelectPlayer: (player: Player) => void;
-  onAddToCompare?: (player: Player) => void;
+  activeBoardKey: string;
+  rankings: Record<string, string[]>;
+  activeBoardOrder: string[];
+  onCommitToBoard: (boardKey: string, orderedIds: string[]) => void;
 }
 
-export default function PlayerRankingMatrix({ players, onSelectPlayer, onAddToCompare }: PlayerRankingMatrixProps) {
-  // Available standard positions
-  const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DT', 'LB', 'CB', 'S'];
-  const [selectedPos, setSelectedPos] = useState<string>('QB');
-  const [showLegend, setShowLegend] = useState<boolean>(true);
-  const [viewMode, setViewMode] = useState<'list' | 'heatmap'>('list');
-  const [showOnlyOutliers, setShowOnlyOutliers] = useState<boolean>(false);
+type TabMode = 'matchup' | 'board' | 'gut_vs_grades';
 
-  // Group players by position and sort by overallGrade in descending order
-  const getPlayersByPosition = (pos: string) => {
-    return [...players]
-      .filter(p => p.position === pos || p.position.includes(pos))
-      .sort((a, b) => b.overallGrade - a.overallGrade);
+export const PlayerRankingMatrix: React.FC<PlayerRankingMatrixProps> = ({
+  players,
+  onSelectPlayer,
+  activeBoardKey,
+  rankings,
+  activeBoardOrder,
+  onCommitToBoard,
+}) => {
+  // Extract unique positions from players data (using IOL & S position convention)
+  const availablePositions = useMemo(() => {
+    const posSet = new Set<string>();
+    const defaultPositions = ['QB', 'RB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DT', 'LB', 'CB', 'S'];
+    players.forEach((p) => {
+      if (p.position) posSet.add(p.position);
+    });
+    defaultPositions.forEach((pos) => posSet.add(pos));
+    return Array.from(posSet).filter((pos) => players.some((p) => p.position === pos));
+  }, [players]);
+
+  const [activePosition, setActivePosition] = useState<string>(
+    availablePositions[0] || 'QB'
+  );
+  const [activeTab, setActiveTab] = useState<TabMode>('matchup');
+  const [prefState, setPrefState] = useState<PreferenceState>(() => loadPreferenceState());
+
+  const [currentPair, setCurrentPair] = useState<[Player, Player] | null>(null);
+  const [recentPairKeys, setRecentPairKeys] = useState<string[]>([]);
+
+  // Modal & Notification States
+  const [commitModalOpen, setCommitModalOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [commitSuccessToast, setCommitSuccessToast] = useState<string | null>(null);
+
+  // Position progress
+  const progress = useMemo(() => {
+    return getPositionProgress(players, activePosition, prefState);
+  }, [players, activePosition, prefState]);
+
+  // Gut vs Grades analysis
+  const gutVsGrades = useMemo(() => {
+    return getGutVsGrades(players, activePosition, prefState);
+  }, [players, activePosition, prefState]);
+
+  // Load next pair when position changes or state updates
+  const loadNextPair = useCallback(
+    (currentState: PreferenceState, position: string, recentKeys: string[]) => {
+      const pair = selectNextPair(players, position, currentState, recentKeys);
+      setCurrentPair(pair);
+    },
+    [players]
+  );
+
+  // Initial load and position switch
+  useEffect(() => {
+    setRecentPairKeys([]);
+    loadNextPair(prefState, activePosition, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePosition, loadNextPair]);
+
+  // Handle recorded choice
+  const handleChoice = useCallback(
+    (outcome: PreferenceOutcome) => {
+      if (!currentPair || !currentPair[0] || !currentPair[1]) return;
+
+      const [pA, pB] = currentPair;
+      const pairKey = [pA.id, pB.id].sort().join(':');
+
+      const newState = recordComparison(
+        prefState,
+        activePosition,
+        pA.id,
+        pB.id,
+        outcome,
+        players
+      );
+
+      const updatedRecentKeys = [...recentPairKeys.slice(-4), pairKey];
+      setPrefState(newState);
+      setRecentPairKeys(updatedRecentKeys);
+
+      loadNextPair(newState, activePosition, updatedRecentKeys);
+    },
+    [currentPair, prefState, activePosition, players, recentPairKeys, loadNextPair]
+  );
+
+  // Handle Undo
+  const handleUndo = () => {
+    const newState = undoLastComparison(prefState, activePosition, players);
+    setPrefState(newState);
+    loadNextPair(newState, activePosition, recentPairKeys);
   };
 
-  // Grouped active players
-  const activePlayers = getPlayersByPosition(selectedPos);
-
-  // Calculate Value Outliers (Peak Individual Trait vs Overall Grade)
-  const getOutlierInfo = (player: Player) => {
-    const traits = player.traits;
-    const traitMax = Math.max(traits.athleticism, traits.technique, traits.production, traits.footballIQ, traits.sizeAndFrame);
-    const outlierDelta = traitMax - player.overallGrade;
-    const isOutlier = outlierDelta >= 4;
-
-    let maxTraitName = 'ATH';
-    if (traits.technique === traitMax) maxTraitName = 'TEC';
-    else if (traits.production === traitMax) maxTraitName = 'PRD';
-    else if (traits.footballIQ === traitMax) maxTraitName = 'FIQ';
-    else if (traits.sizeAndFrame === traitMax) maxTraitName = 'SZF';
-
-    return { traitMax, outlierDelta, isOutlier, maxTraitName };
+  // Handle Skip (cap recent keys history to last 5)
+  const handleSkip = () => {
+    if (!currentPair) return;
+    const pairKey = [currentPair[0].id, currentPair[1].id].sort().join(':');
+    const updatedRecentKeys = [...recentPairKeys.slice(-4), pairKey];
+    setRecentPairKeys(updatedRecentKeys);
+    loadNextPair(prefState, activePosition, updatedRecentKeys);
   };
 
-  // Filter based on outlier toggle
-  const filteredActivePlayers = showOnlyOutliers
-    ? activePlayers.filter(p => getOutlierInfo(p).isOutlier)
-    : activePlayers;
-
-  // Color generator for heatmap score ranges
-  const getHeatmapColor = (score: number) => {
-    if (score >= 95) return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 font-extrabold';
-    if (score >= 90) return 'bg-teal-500/15 text-teal-300 border-teal-500/25 font-bold';
-    if (score >= 85) return 'bg-blue-500/10 text-blue-300 border-blue-500/20';
-    if (score >= 80) return 'bg-indigo-500/5 text-indigo-300 border-indigo-500/15';
-    if (score >= 70) return 'bg-slate-900/60 text-slate-400 border-slate-850/50';
-    return 'bg-slate-950/40 text-slate-500 border-slate-900/30';
+  // Handle Reset Position Preferences
+  const handleReset = () => {
+    const newState = resetPositionPreferences(prefState, activePosition, players);
+    setPrefState(newState);
+    setRecentPairKeys([]);
+    setResetConfirmOpen(false);
+    loadNextPair(newState, activePosition, []);
   };
+
+  // Keyboard shortcut listener for 1–5 and Left/Right arrow keys
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeTab !== 'matchup') return;
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        (e.target as HTMLElement).isContentEditable
+      ) {
+        return;
+      }
+
+      switch (e.key) {
+        case '1':
+          e.preventDefault();
+          handleChoice('strong_a');
+          break;
+        case '2':
+          e.preventDefault();
+          handleChoice('slight_a');
+          break;
+        case '3':
+          e.preventDefault();
+          handleChoice('toss_up');
+          break;
+        case '4':
+          e.preventDefault();
+          handleChoice('slight_b');
+          break;
+        case '5':
+          e.preventDefault();
+          handleChoice('strong_b');
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          handleChoice('slight_a');
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          handleChoice('slight_b');
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, handleChoice]);
+
+  // Handle Commit Preference Board to App Board State
+  const handleCommitToBoard = () => {
+    try {
+      const posState = prefState[activePosition];
+      if (!posState) return;
+
+      const posPlayers = players.filter((p) => p.position === activePosition);
+      const sortedByElo = [...posPlayers].sort((a, b) => {
+        const rA = posState.ratings[a.id]?.rating ?? DEFAULT_RATING;
+        const rB = posState.ratings[b.id]?.rating ?? DEFAULT_RATING;
+        return rB - rA;
+      });
+
+      const prefOrderIds = sortedByElo.map((p) => p.id);
+      const posPlayerIds = new Set(posPlayers.map((p) => p.id));
+
+      // Base the merge on the board's CURRENT EFFECTIVE order (grade-sorted for
+      // an un-customized board), not raw player-array order, so committing one
+      // position's order never reshuffles the others.
+      const currentBoardList = rankings[activeBoardKey] || activeBoardOrder;
+
+      const posIndices: number[] = [];
+      currentBoardList.forEach((pid, idx) => {
+        if (posPlayerIds.has(pid)) {
+          posIndices.push(idx);
+        }
+      });
+
+      const updatedBoardList = [...currentBoardList];
+      posIndices.forEach((boardIdx, i) => {
+        if (i < prefOrderIds.length) {
+          updatedBoardList[boardIdx] = prefOrderIds[i];
+        }
+      });
+
+      const boardSet = new Set(updatedBoardList);
+      prefOrderIds.forEach((pid) => {
+        if (!boardSet.has(pid)) {
+          updatedBoardList.push(pid);
+          boardSet.add(pid);
+        }
+      });
+
+      // Invoke App callback to persist to rankings state + storage
+      onCommitToBoard(activeBoardKey, updatedBoardList);
+
+      setCommitSuccessToast(`Committed ${activePosition} preference order to board '${activeBoardKey}'!`);
+      setCommitModalOpen(false);
+      setTimeout(() => setCommitSuccessToast(null), 4000);
+    } catch (err) {
+      console.error('Error committing preferences to board:', err);
+    }
+  };
+
+  const posHistoryCount = prefState[activePosition]?.history.length || 0;
 
   return (
-    <div className="bg-slate-950 border-2 border-slate-800 p-5 md:p-6 space-y-5 rounded-none h-full flex flex-col justify-between">
-      <div className="space-y-4">
-        {/* Title Block */}
-        <div className="border-b border-slate-900 pb-3">
-          <div className="flex items-center gap-2">
-            <Layers className="w-5 h-5 text-emerald-400" />
-            <span className="text-[10px] uppercase font-bold font-mono text-slate-400 tracking-wider">
-              Positional Grading Engine
+    <div className="w-full space-y-6">
+      {/* Toast Notification */}
+      {commitSuccessToast && (
+        <div className="fixed top-5 right-5 z-50 bg-emerald-950 border border-emerald-500/50 text-emerald-200 px-4 py-3 rounded-lg shadow-xl flex items-center space-x-2 animate-bounce">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+          <span className="font-mono text-sm">{commitSuccessToast}</span>
+        </div>
+      )}
+
+      {/* Header & Title */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+        <div>
+          <div className="flex items-center space-x-2">
+            <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs uppercase tracking-wider rounded">
+              Spec 01 Engine
+            </span>
+            <span className="text-slate-400 text-xs font-mono">
+              Pairwise Elo Workbench
             </span>
           </div>
-          <h2 className="text-xl md:text-2xl font-serif font-bold italic text-slate-100 mt-1">
-            Positional Scouting Matrix
-          </h2>
-          <p className="text-xs text-slate-400 leading-relaxed mt-1">
-            Analyze prospects sorted by their natural positional scouting grades. Switch to Heatmap view to pinpoint prospects with elite individual traits.
-          </p>
+          <h1 className="text-2xl md:text-3xl font-serif italic text-slate-100 mt-1">
+            Scouting Preference Matrix
+          </h1>
         </div>
 
-        {/* Position Selectors Grid */}
-        <div className="flex flex-wrap gap-1 border-b border-slate-900 pb-3">
-          {positions.map((pos) => {
-            const count = players.filter(p => p.position === pos || p.position.includes(pos)).length;
-            const isActive = selectedPos === pos;
+        {/* Settled Progress Indicator */}
+        <div className="flex items-center space-x-4 bg-slate-900 border border-slate-800 p-3 rounded-xl">
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-xs font-mono space-x-4">
+              <span className="text-slate-400">Position Status</span>
+              <span className={progress.isSettled ? 'text-emerald-400 font-semibold' : 'text-amber-400'}>
+                {progress.statusLabel}
+              </span>
+            </div>
+            <div className="w-48 bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-300 ${
+                  progress.isSettled ? 'bg-emerald-500' : 'bg-amber-500'
+                }`}
+                style={{ width: `${progress.progressPct}%` }}
+              />
+            </div>
+          </div>
+          <div className="border-l border-slate-800 pl-3 text-right">
+            <span className="text-xs font-mono text-slate-400 block">Comparisons</span>
+            <span className="text-sm font-mono font-bold text-slate-200">{posHistoryCount}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Controls: Position Pills + View Tabs */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        {/* Position Selector */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-thin">
+          {availablePositions.map((pos) => {
+            const isActive = pos === activePosition;
+            const posProg = getPositionProgress(players, pos, prefState);
             return (
               <button
                 key={pos}
-                onClick={() => setSelectedPos(pos)}
-                className={`px-3 py-1.5 font-mono text-xs font-bold uppercase transition-all flex items-center gap-1.5 rounded-none border ${
+                onClick={() => setActivePosition(pos)}
+                className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all flex items-center space-x-1.5 whitespace-nowrap ${
                   isActive
-                    ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                    : 'bg-slate-900 border-slate-850 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                    ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                    : 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700'
                 }`}
               >
-                {pos}
-                <span className={`text-[9px] px-1 rounded-sm ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-950 text-slate-500'}`}>
-                  {count}
-                </span>
+                <span>{pos}</span>
+                {posProg.isSettled && (
+                  <CheckCircle2 className={`w-3 h-3 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Draft Value Range Legend (Interactive) */}
-        {showLegend && (
-          <div className="bg-slate-900/50 border border-slate-850 p-3.5 space-y-2.5">
-            <div className="flex justify-between items-center">
-              <span className="text-[9px] font-mono font-bold uppercase text-slate-400 flex items-center gap-1">
-                <HelpCircle className="w-3 h-3 text-slate-500" /> Positional Valuation Scale
-              </span>
-              <button 
-                onClick={() => setShowLegend(false)}
-                className="text-[9px] text-slate-500 hover:text-slate-300 font-mono uppercase"
-              >
-                [ Hide ]
-              </button>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-emerald-400 font-bold font-mono">95+ (Grade)</span>
-                <p className="text-slate-400 font-mono">Top 5 Pick Range</p>
-              </div>
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-teal-400 font-bold font-mono">90 - 94 (Grade)</span>
-                <p className="text-slate-400 font-mono">Blue Chip / Top 15</p>
-              </div>
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-blue-400 font-bold font-mono">85 - 89 (Grade)</span>
-                <p className="text-slate-400 font-mono">Day 1 High-End Starter</p>
-              </div>
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-indigo-400 font-bold font-mono">80 - 84 (Grade)</span>
-                <p className="text-slate-400 font-mono">Red Chip Contributor</p>
-              </div>
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-purple-400 font-bold font-mono">75 - 79 (Grade)</span>
-                <p className="text-slate-400 font-mono">Quality Developmental Starter</p>
-              </div>
-              <div className="text-[10px] space-y-0.5">
-                <span className="text-amber-400 font-bold font-mono">65 - 74 (Grade)</span>
-                <p className="text-slate-400 font-mono">Rotational / Special Teamer</p>
-              </div>
-            </div>
-          </div>
-        )}
-        {!showLegend && (
-          <div className="flex justify-end">
-            <button 
-              onClick={() => setShowLegend(true)}
-              className="text-[9px] text-slate-500 hover:text-slate-300 font-mono uppercase"
-            >
-              [ Show Grading Scale ]
-            </button>
-          </div>
-        )}
+        {/* View Tabs */}
+        <div className="flex items-center space-x-1 bg-slate-900 border border-slate-800 p-1 rounded-xl self-start lg:self-auto">
+          <button
+            onClick={() => setActiveTab('matchup')}
+            className={`px-4 py-2 rounded-lg text-xs font-mono transition-all flex items-center space-x-2 ${
+              activeTab === 'matchup'
+                ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <GitCompare className="w-4 h-4" />
+            <span>Matchup Lab</span>
+          </button>
 
-        {/* View Layout Toggle Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-900 pb-2 mt-2">
-          <div className="flex items-center gap-1 bg-slate-900/60 p-0.5 border border-slate-850 rounded-lg shrink-0">
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-3 py-1 text-[10px] font-mono font-bold uppercase transition-colors rounded-md ${
-                viewMode === 'list'
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : 'text-slate-400 hover:text-slate-200 border border-transparent'
-              }`}
-            >
-              Scouting List
-            </button>
-            <button
-              onClick={() => setViewMode('heatmap')}
-              className={`px-3 py-1 text-[10px] font-mono font-bold uppercase transition-colors rounded-md flex items-center gap-1.5 ${
-                viewMode === 'heatmap'
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : 'text-slate-400 hover:text-slate-200 border border-transparent'
-              }`}
-            >
-              <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
-              Heatmap Outliers
-            </button>
-          </div>
+          <button
+            onClick={() => setActiveTab('board')}
+            className={`px-4 py-2 rounded-lg text-xs font-mono transition-all flex items-center space-x-2 ${
+              activeTab === 'board'
+                ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Trophy className="w-4 h-4" />
+            <span>Preference Board</span>
+          </button>
 
-          {/* Dynamic Value Outlier filter (Visible in Heatmap Mode) */}
-          {viewMode === 'heatmap' && (
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={showOnlyOutliers}
-                onChange={(e) => setShowOnlyOutliers(e.target.checked)}
-                className="rounded border-slate-800 bg-slate-950 text-emerald-500 focus:ring-0 w-3.5 h-3.5 cursor-pointer"
-              />
-              <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                Only High-Value Trait Outliers (Delta ≥ +4)
-              </span>
-            </label>
-          )}
+          <button
+            onClick={() => setActiveTab('gut_vs_grades')}
+            className={`px-4 py-2 rounded-lg text-xs font-mono transition-all flex items-center space-x-2 ${
+              activeTab === 'gut_vs_grades'
+                ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Brain className="w-4 h-4" />
+            <span>Gut vs. Grades</span>
+          </button>
         </div>
+      </div>
 
-        {/* Positional List Matrix */}
-        <div className="space-y-2 mt-4 max-h-[500px] overflow-y-auto pr-1">
-          {filteredActivePlayers.length === 0 ? (
-            <div className="text-center py-10 border border-dashed border-slate-900 font-mono text-xs text-slate-500">
-              No evaluated {selectedPos} prospects found in draft class.
+      {/* ========================================================================= */}
+      {/* TAB 1: MATCHUP LAB */}
+      {/* ========================================================================= */}
+      {activeTab === 'matchup' && (
+        <div className="space-y-6">
+          {!currentPair || !currentPair[0] || !currentPair[1] ? (
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center space-y-4">
+              <Sparkles className="w-12 h-12 text-emerald-400 mx-auto opacity-80" />
+              <h3 className="text-xl font-serif italic text-slate-200">
+                Not enough prospects in {activePosition} to compare.
+              </h3>
+              <p className="text-sm font-mono text-slate-400 max-w-md mx-auto">
+                Need at least 2 prospects assigned to position {activePosition} to run head-to-head comparisons.
+              </p>
             </div>
-          ) : viewMode === 'list' ? (
-            /* CLASSIC LIST VIEW */
-            activePlayers.map((player, idx) => {
-              const draftRange = getDraftRange(player.overallGrade);
-              const outlier = getOutlierInfo(player);
-              return (
-                <div 
-                  key={player.id}
-                  className="bg-slate-950/60 border border-slate-850 hover:border-slate-700 p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-all relative group"
-                >
-                  {/* Left info */}
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-slate-500 text-xs font-bold w-4">
-                        #{idx + 1}
-                      </span>
-                      <button
-                        onClick={() => onSelectPlayer(player)}
-                        className="font-serif font-bold italic text-slate-200 hover:text-emerald-400 text-sm md:text-base text-left truncate hover:underline"
-                      >
-                        {player.name}
-                      </button>
-                      <span className="text-[10px] text-slate-500 font-mono">
-                        ({player.school})
-                      </span>
-                      {player.archetype === 'Blue Chip Prospect' && (
-                        <span className="text-[8px] font-mono font-bold px-1.5 py-0.5 bg-teal-500/10 text-teal-400 border border-teal-500/20 uppercase rounded-sm">
-                          Blue Chip
-                        </span>
-                      )}
-                    </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Head to Head Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                {/* VS Badge */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-slate-950 border-2 border-slate-800 font-mono text-xs font-bold text-emerald-400 shadow-xl">
+                  VS
+                </div>
 
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
-                      <span>Ath: {player.traits.athleticism}</span>
-                      <span>•</span>
-                      <span>Tec: {player.traits.technique}</span>
-                      <span>•</span>
-                      <span>Prd: {player.traits.production}</span>
-                      {outlier.isOutlier && (
-                        <>
-                          <span>•</span>
-                          <span className="text-emerald-400 flex items-center gap-0.5">
-                            <Sparkles className="w-2.5 h-2.5 text-amber-400" />
-                            Value Outlier (+{outlier.outlierDelta})
-                          </span>
-                        </>
-                      )}
-                    </div>
+                {/* Prospect A Card */}
+                <ProspectMatchupCard
+                  player={currentPair[0]}
+                  side="A"
+                  rating={prefState[activePosition]?.ratings[currentPair[0].id]?.rating ?? DEFAULT_RATING}
+                  comparisons={prefState[activePosition]?.ratings[currentPair[0].id]?.comparisons ?? 0}
+                  onSelectPlayer={onSelectPlayer}
+                />
+
+                {/* Prospect B Card */}
+                <ProspectMatchupCard
+                  player={currentPair[1]}
+                  side="B"
+                  rating={prefState[activePosition]?.ratings[currentPair[1].id]?.rating ?? DEFAULT_RATING}
+                  comparisons={prefState[activePosition]?.ratings[currentPair[1].id]?.comparisons ?? 0}
+                  onSelectPlayer={onSelectPlayer}
+                />
+              </div>
+
+              {/* 5-Way Decision Bar */}
+              <div className="bg-slate-900 border border-slate-800 p-4 md:p-6 rounded-2xl space-y-4 shadow-xl">
+                <div className="text-center">
+                  <span className="font-mono text-xs text-slate-400 uppercase tracking-widest">
+                    Select Your Instinctive Preference
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  {(Object.keys(OUTCOME_SCORES) as PreferenceOutcome[]).map((outcome) => {
+                    const info = OUTCOME_SCORES[outcome];
+                    return (
+                      <button
+                        key={outcome}
+                        onClick={() => handleChoice(outcome)}
+                        className="group relative flex flex-col items-center justify-center p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 hover:bg-emerald-950/20 transition-all duration-200 active:scale-95"
+                      >
+                        <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-slate-900 border border-slate-800 rounded font-mono text-[10px] text-slate-400 group-hover:border-emerald-500/40 group-hover:text-emerald-400">
+                          {info.keyHint}
+                        </span>
+                        <span className="font-serif italic text-sm font-semibold text-slate-200 group-hover:text-emerald-300">
+                          {info.shortLabel}
+                        </span>
+                        <span className="font-mono text-[11px] text-slate-400 mt-1">
+                          {outcome === 'strong_a' || outcome === 'slight_a'
+                            ? currentPair[0].name.split(' ').pop()
+                            : outcome === 'strong_b' || outcome === 'slight_b'
+                            ? currentPair[1].name.split(' ').pop()
+                            : 'Even'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Matchup Controls: Undo / Skip / Reset */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs font-mono text-slate-400">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={handleUndo}
+                      disabled={posHistoryCount === 0}
+                      className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg hover:border-slate-700 disabled:opacity-40 flex items-center space-x-1.5 transition-all"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Undo Last</span>
+                    </button>
+
+                    <button
+                      onClick={handleSkip}
+                      className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg hover:border-slate-700 flex items-center space-x-1.5 transition-all"
+                    >
+                      <SkipForward className="w-3.5 h-3.5" />
+                      <span>Skip Pair</span>
+                    </button>
                   </div>
 
-                  {/* Right valuation & actions */}
-                  <div className="flex sm:flex-col items-end gap-1.5 w-full sm:w-auto shrink-0 justify-between sm:justify-start">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-mono text-slate-400">Grade:</span>
-                      <span className="text-xs md:text-sm font-bold font-mono text-slate-100 bg-slate-900 px-2 py-0.5 border border-slate-800">
-                        {player.overallGrade}/99
-                      </span>
-                    </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="hidden sm:inline text-[11px] text-slate-400">
+                      Keyboard: <kbd className="px-1 bg-slate-800 rounded text-slate-300">1-5</kbd> or <kbd className="px-1 bg-slate-800 rounded text-slate-300">← / →</kbd>
+                    </span>
 
-                    {/* Draft value range badge */}
-                    <div className={`px-2 py-1 text-[9px] font-mono font-bold uppercase border tracking-wider ${draftRange.color} ${draftRange.bg} ${draftRange.border}`}>
-                      {draftRange.range}
-                    </div>
-
-                    {/* Quick action buttons on hover */}
-                    {onAddToCompare && (
-                      <button
-                        onClick={() => onAddToCompare(player)}
-                        className="sm:opacity-0 group-hover:opacity-100 px-2 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded text-[8px] font-mono font-bold uppercase transition-all flex items-center gap-1"
-                        title="Add to comparative sandbox"
-                      >
-                        Compare <ArrowRight className="w-2.5 h-2.5" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setResetConfirmOpen(true)}
+                      className="text-slate-400 hover:text-rose-400 transition-colors"
+                    >
+                      Reset {activePosition}
+                    </button>
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            /* HEATMAP VISUALIZER TABLE VIEW */
-            <div className="overflow-x-auto border border-slate-900 rounded-xl bg-slate-950">
-              <table className="w-full text-left border-collapse min-w-[700px]">
-                <thead>
-                  <tr className="bg-slate-900/60 border-b border-slate-800 font-mono text-[9px] text-slate-400 uppercase tracking-wider">
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 2: PREFERENCE BOARD */}
+      {/* ========================================================================= */}
+      {activeTab === 'board' && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-4 rounded-xl">
+            <div>
+              <h3 className="font-serif italic text-lg text-slate-100">
+                {activePosition} Elo Preference Standings
+              </h3>
+              <p className="font-mono text-xs text-slate-400">
+                Calculated from head-to-head gut comparison choices
+              </p>
+            </div>
+
+            <button
+              onClick={() => setCommitModalOpen(true)}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono text-xs font-bold rounded-lg shadow-lg shadow-emerald-500/20 flex items-center space-x-2 transition-all self-start sm:self-auto"
+            >
+              <Save className="w-4 h-4" />
+              <span>Commit to Board...</span>
+            </button>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase tracking-wider">
+                  <tr>
+                    <th className="py-3 px-4">Rank</th>
                     <th className="py-3 px-4">Prospect</th>
-                    <th className="py-3 px-2 text-center">Grade</th>
-                    <th className="py-3 px-2 text-center">Athleticism (ATH)</th>
-                    <th className="py-3 px-2 text-center">Technique (TEC)</th>
-                    <th className="py-3 px-2 text-center">Production (PRD)</th>
-                    <th className="py-3 px-2 text-center">IQ (FIQ)</th>
-                    <th className="py-3 px-2 text-center">Size (SZF)</th>
-                    <th className="py-3 px-4 text-right">Outlier Index</th>
+                    <th className="py-3 px-4">School / Year</th>
+                    <th className="py-3 px-4 text-right">Preference Elo</th>
+                    <th className="py-3 px-4 text-center">Comparisons</th>
+                    <th className="py-3 px-4 text-right">Trait Grade</th>
+                    <th className="py-3 px-4 text-center">Status</th>
+                    <th className="py-3 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-900/60">
-                  {filteredActivePlayers.map((player, idx) => {
-                    const traits = player.traits;
-                    const outlier = getOutlierInfo(player);
+                <tbody className="divide-y divide-slate-800">
+                  {gutVsGrades.items.map((item, idx) => {
+                    const ratingObj = prefState[activePosition]?.ratings[item.player.id];
+                    const count = ratingObj?.comparisons || 0;
+                    const eloRating = ratingObj?.rating ?? DEFAULT_RATING;
+
                     return (
-                      <tr 
-                        key={player.id}
-                        className="hover:bg-slate-900/20 transition-colors group"
-                      >
-                        {/* Prospect detail */}
+                      <tr key={item.player.id} className="hover:bg-slate-800/50 transition-colors">
+                        <td className="py-3 px-4 font-bold text-emerald-400">#{idx + 1}</td>
                         <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-[10px] text-slate-500 font-bold">
-                              #{idx + 1}
+                          <button
+                            onClick={() => onSelectPlayer(item.player)}
+                            className="font-serif italic text-sm font-semibold text-slate-200 hover:text-emerald-300 text-left"
+                          >
+                            {item.player.name}
+                          </button>
+                        </td>
+                        <td className="py-3 px-4 text-slate-400">
+                          {item.player.school} • {item.player.year || 'SR'}
+                        </td>
+                        <td className="py-3 px-4 text-right font-bold text-slate-100">
+                          {eloRating.toFixed(1)}
+                        </td>
+                        <td className="py-3 px-4 text-center text-slate-400">{count}</td>
+                        <td className="py-3 px-4 text-right font-bold text-slate-300">
+                          {item.player.overallGrade?.toFixed(1) || 'N/A'}
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          {count >= 6 ? (
+                            <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded text-[10px]">
+                              Settled
                             </span>
-                            <div>
-                              <button
-                                onClick={() => onSelectPlayer(player)}
-                                className="font-serif font-bold italic text-slate-200 hover:text-emerald-400 text-sm hover:underline text-left block"
-                              >
-                                {player.name}
-                              </button>
-                              <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
-                                <span>{player.school}</span>
-                                {player.archetype && (
-                                  <>
-                                    <span className="text-slate-600">•</span>
-                                    <span className="text-emerald-500/80 font-semibold">{player.archetype}</span>
-                                  </>
-                                )}
-                              </span>
-                            </div>
-                          </div>
+                          ) : count > 0 ? (
+                            <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded text-[10px]">
+                              Developing
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-[10px]">
+                              Provisional
+                            </span>
+                          )}
                         </td>
-
-                        {/* Overall Grade */}
-                        <td className="py-3 px-2 text-center font-mono text-xs font-bold text-slate-100">
-                          <span className="bg-slate-900 px-2 py-1 border border-slate-800 rounded">
-                            {player.overallGrade}
-                          </span>
-                        </td>
-
-                        {/* Heatmap Trait cells with micro-shading */}
-                        <td className={`py-3 px-2 text-center font-mono text-xs border-r border-slate-900/40 ${getHeatmapColor(traits.athleticism)}`}>
-                          {traits.athleticism}
-                        </td>
-                        <td className={`py-3 px-2 text-center font-mono text-xs border-r border-slate-900/40 ${getHeatmapColor(traits.technique)}`}>
-                          {traits.technique}
-                        </td>
-                        <td className={`py-3 px-2 text-center font-mono text-xs border-r border-slate-900/40 ${getHeatmapColor(traits.production)}`}>
-                          {traits.production}
-                        </td>
-                        <td className={`py-3 px-2 text-center font-mono text-xs border-r border-slate-900/40 ${getHeatmapColor(traits.footballIQ)}`}>
-                          {traits.footballIQ}
-                        </td>
-                        <td className={`py-3 px-2 text-center font-mono text-xs ${getHeatmapColor(traits.sizeAndFrame)}`}>
-                          {traits.sizeAndFrame}
-                        </td>
-
-                        {/* Value Outlier indicator */}
                         <td className="py-3 px-4 text-right">
-                          <div className="flex flex-col items-end justify-center">
-                            {outlier.outlierDelta > 0 ? (
-                              <div className="flex items-center gap-1 text-xs font-mono font-bold text-emerald-400">
-                                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                                <span>+{outlier.outlierDelta} ({outlier.maxTraitName})</span>
-                              </div>
-                            ) : outlier.outlierDelta === 0 ? (
-                              <span className="text-[10px] font-mono text-slate-500">Neutral</span>
-                            ) : (
-                              <span className="text-[10px] font-mono text-slate-600">{outlier.outlierDelta}</span>
-                            )}
-                            <span className={`text-[8px] font-mono uppercase tracking-wider ${outlier.isOutlier ? 'text-amber-400 font-bold' : 'text-slate-500'}`}>
-                              {outlier.isOutlier ? 'Value Outlier' : 'Balanced Stock'}
-                            </span>
-                          </div>
+                          <button
+                            onClick={() => onSelectPlayer(item.player)}
+                            className="text-slate-400 hover:text-emerald-400"
+                          >
+                            <ExternalLink className="w-4 h-4 inline" />
+                          </button>
                         </td>
                       </tr>
                     );
@@ -447,17 +584,350 @@ export default function PlayerRankingMatrix({ players, onSelectPlayer, onAddToCo
                 </tbody>
               </table>
             </div>
-          )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: GUT VS GRADES (THE LEARNING PAYOFF) */}
+      {/* ========================================================================= */}
+      {activeTab === 'gut_vs_grades' && (
+        <div className="space-y-6">
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <div className="flex items-center space-x-2 text-emerald-400 font-mono text-xs uppercase tracking-wider">
+              <Brain className="w-4 h-4" />
+              <span>Self-Audit Insight Engine</span>
+            </div>
+            <h3 className="font-serif italic text-xl text-slate-100">
+              Gut Preference vs. Systematic Trait Grade
+            </h3>
+            <p className="font-mono text-xs text-slate-400 max-w-3xl">
+              This matrix contrasts where your instinctive gut preference (Elo) diverges from your objective trait grades. Divergence highlights potential scouting biases, flash-play weighting, or scheme fit instinct.
+            </p>
+          </div>
+
+          {/* Divergence Highlight Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Biggest Sleeper */}
+            <div className="bg-slate-900 border border-emerald-500/30 p-5 rounded-2xl space-y-3 relative overflow-hidden">
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs uppercase tracking-wider text-emerald-400 font-semibold flex items-center space-x-1">
+                  <ArrowUp className="w-4 h-4" />
+                  <span>Biggest Gut Sleeper</span>
+                </span>
+                {gutVsGrades.biggestSleeper && (
+                  <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 font-mono text-xs rounded font-bold">
+                    +{gutVsGrades.biggestSleeper.delta} Ranks Higher
+                  </span>
+                )}
+              </div>
+
+              {gutVsGrades.biggestSleeper ? (
+                <div className="space-y-2">
+                  <button
+                    onClick={() => onSelectPlayer(gutVsGrades.biggestSleeper!.player)}
+                    className="font-serif italic text-lg font-bold text-slate-100 hover:text-emerald-300"
+                  >
+                    {gutVsGrades.biggestSleeper.player.name}
+                  </button>
+                  <p className="font-mono text-xs text-slate-400">
+                    Gut Rank: <strong className="text-emerald-400">#{gutVsGrades.biggestSleeper.gutRank}</strong> • Grade Rank: <strong className="text-slate-300">#{gutVsGrades.biggestSleeper.gradeRank}</strong>
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed border-t border-slate-800 pt-2">
+                    Your instinct rates {gutVsGrades.biggestSleeper.player.name} significantly higher than your trait grades suggest. Check if you are heavily weighting high-end flash plays or subconscious scheme fit.
+                  </p>
+                </div>
+              ) : (
+                <p className="font-mono text-xs text-slate-400 italic">No positive divergence detected in this position pool yet.</p>
+              )}
+            </div>
+
+            {/* Biggest Skeptic */}
+            <div className="bg-slate-900 border border-rose-500/30 p-5 rounded-2xl space-y-3 relative overflow-hidden">
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-rose-500/5 rounded-full blur-xl pointer-events-none" />
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs uppercase tracking-wider text-rose-400 font-semibold flex items-center space-x-1">
+                  <ArrowDown className="w-4 h-4" />
+                  <span>Biggest Gut Skeptic</span>
+                </span>
+                {gutVsGrades.biggestSkeptic && (
+                  <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 font-mono text-xs rounded font-bold">
+                    {gutVsGrades.biggestSkeptic.delta} Ranks Lower
+                  </span>
+                )}
+              </div>
+
+              {gutVsGrades.biggestSkeptic ? (
+                <div className="space-y-2">
+                  <button
+                    onClick={() => onSelectPlayer(gutVsGrades.biggestSkeptic!.player)}
+                    className="font-serif italic text-lg font-bold text-slate-100 hover:text-rose-300"
+                  >
+                    {gutVsGrades.biggestSkeptic.player.name}
+                  </button>
+                  <p className="font-mono text-xs text-slate-400">
+                    Gut Rank: <strong className="text-rose-400">#{gutVsGrades.biggestSkeptic.gutRank}</strong> • Grade Rank: <strong className="text-slate-300">#{gutVsGrades.biggestSkeptic.gradeRank}</strong>
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed border-t border-slate-800 pt-2">
+                    You are hesitant on {gutVsGrades.biggestSkeptic.player.name} despite strong trait scores. Are you discounting them due to injury concerns, system fit, or personal bias?
+                  </p>
+                </div>
+              ) : (
+                <p className="font-mono text-xs text-slate-400 italic">No negative divergence detected in this position pool yet.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Detailed Divergence Table */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="p-4 border-b border-slate-800 flex justify-between items-center">
+              <h4 className="font-serif italic text-base text-slate-200">
+                {activePosition} Divergence Breakdown
+              </h4>
+              <span className="font-mono text-xs text-slate-400">
+                Delta = Grade Rank − Gut Rank
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase tracking-wider">
+                  <tr>
+                    <th className="py-3 px-4">Prospect</th>
+                    <th className="py-3 px-4 text-center">Gut Rank (Elo)</th>
+                    <th className="py-3 px-4 text-center">Grade Rank</th>
+                    <th className="py-3 px-4 text-center">Divergence Delta</th>
+                    <th className="py-3 px-4 text-right">Elo Score</th>
+                    <th className="py-3 px-4 text-right">Trait Grade</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {gutVsGrades.items.map((item) => (
+                    <tr key={item.player.id} className="hover:bg-slate-800/50 transition-colors">
+                      <td className="py-3 px-4">
+                        <button
+                          onClick={() => onSelectPlayer(item.player)}
+                          className="font-serif italic text-sm font-semibold text-slate-200 hover:text-emerald-300 text-left"
+                        >
+                          {item.player.name}
+                        </button>
+                      </td>
+                      <td className="py-3 px-4 text-center font-bold text-slate-100">
+                        #{item.gutRank}
+                      </td>
+                      <td className="py-3 px-4 text-center text-slate-400">
+                        #{item.gradeRank}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {item.delta > 0 ? (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                            <ArrowUp className="w-3 h-3" />
+                            <span>+{item.delta}</span>
+                          </span>
+                        ) : item.delta < 0 ? (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30 font-bold">
+                            <ArrowDown className="w-3 h-3" />
+                            <span>{item.delta}</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-bold">
+                            <Minus className="w-3 h-3" />
+                            <span>0</span>
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-slate-200">
+                        {item.rating.toFixed(1)}
+                      </td>
+                      <td className="py-3 px-4 text-right text-slate-400">
+                        {item.player.overallGrade?.toFixed(1) || 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: COMMIT PREFERENCE TO BOARD */}
+      {/* ========================================================================= */}
+      {commitModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-5 shadow-2xl">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-serif italic text-lg text-slate-100">
+                Commit {activePosition} Preference Order
+              </h3>
+              <button
+                onClick={() => setCommitModalOpen(false)}
+                className="text-slate-400 hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="font-mono text-xs text-slate-300 leading-relaxed">
+              This will overwrite the ordering of all <strong className="text-emerald-400">{activePosition}</strong> prospects on your target board to match your gut preference standings. Other positions remain unchanged.
+            </p>
+
+            <div className="space-y-2">
+              <label className="font-mono text-xs text-slate-400 uppercase tracking-wider block">
+                Target Board Key
+              </label>
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-slate-200 flex items-center justify-between">
+                <span>Active Board: <strong className="text-emerald-400">{activeBoardKey}</strong></span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-2">
+              <button
+                onClick={() => setCommitModalOpen(false)}
+                className="px-4 py-2 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 font-mono text-xs rounded-lg transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCommitToBoard}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono text-xs font-bold rounded-lg transition-all shadow-lg shadow-emerald-500/20"
+              >
+                Confirm & Commit Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: RESET POSITION CONFIRMATION */}
+      {/* ========================================================================= */}
+      {resetConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-rose-500/30 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+            <h3 className="font-serif italic text-lg text-rose-300">
+              Reset {activePosition} Preferences?
+            </h3>
+            <p className="font-mono text-xs text-slate-300 leading-relaxed">
+              This will erase all recorded comparisons and reset Elo ratings for {activePosition} prospects back to 1500. This action cannot be undone.
+            </p>
+
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+              <button
+                onClick={() => setResetConfirmOpen(false)}
+                className="px-4 py-2 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 font-mono text-xs rounded-lg transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold rounded-lg transition-all shadow-lg shadow-rose-600/20"
+              >
+                Reset Preferences
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ========================================================================= */
+/* PROSPECT MATCHUP CARD SUB-COMPONENT */
+/* ========================================================================= */
+interface ProspectMatchupCardProps {
+  player: Player;
+  side: 'A' | 'B';
+  rating: number;
+  comparisons: number;
+  onSelectPlayer: (player: Player) => void;
+}
+
+const ProspectMatchupCard: React.FC<ProspectMatchupCardProps> = ({
+  player,
+  side,
+  rating,
+  comparisons,
+  onSelectPlayer,
+}) => {
+  return (
+    <div className="bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-2xl flex flex-col justify-between space-y-6 shadow-xl relative transition-all">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-serif italic text-lg font-bold text-emerald-400 overflow-hidden">
+            {player.photoUrl ? (
+              <img src={player.photoUrl} alt={player.name} className="w-full h-full object-cover" />
+            ) : (
+              player.name.split(' ').map((n) => n[0]).join('')
+            )}
+          </div>
+          <div>
+            <button
+              onClick={() => onSelectPlayer(player)}
+              className="font-serif italic text-xl font-bold text-slate-100 hover:text-emerald-400 text-left block"
+            >
+              {player.name}
+            </button>
+            <span className="font-mono text-xs text-slate-400 block">
+              {player.school} • {player.position}
+            </span>
+          </div>
+        </div>
+
+        <span className="px-2 py-1 bg-slate-950 border border-slate-800 text-slate-400 font-mono text-xs rounded">
+          Card {side}
+        </span>
+      </div>
+
+      {/* Metrics & Elo */}
+      <div className="grid grid-cols-2 gap-3 font-mono text-xs">
+        <div className="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+          <span className="text-slate-400 block text-[10px] uppercase">Trait Grade</span>
+          <span className="text-base font-bold text-slate-100">
+            {player.overallGrade ? player.overallGrade.toFixed(1) : 'N/A'}
+          </span>
+        </div>
+
+        <div className="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+          <span className="text-slate-400 block text-[10px] uppercase">Current Gut Elo</span>
+          <span className="text-base font-bold text-emerald-400">
+            {rating.toFixed(1)}
+          </span>
         </div>
       </div>
 
-      <div className="pt-4 border-t border-slate-900 mt-4 text-[10px] font-mono text-slate-500 flex justify-between items-center">
-        <span className="flex items-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          PROSPECT MATRIX ENGINE v1.5
-        </span>
-        <span>{filteredActivePlayers.length} SHOWN</span>
+      {/* Trait Pillars (Object Property Mapping) */}
+      {player.traits && (
+        <div className="space-y-1.5 border-t border-slate-800/80 pt-3">
+          <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider block">
+            Trait Pillars
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {(['athleticism', 'technique', 'production', 'footballIQ', 'sizeAndFrame'] as const).map((k) => {
+              const val = player.traits?.[k];
+              if (val === undefined) return null;
+              const label = k === 'footballIQ' ? 'IQ' : k === 'sizeAndFrame' ? 'SIZ' : k.slice(0, 3).toUpperCase();
+              return (
+                <span key={k} className="px-2 py-0.5 bg-slate-800 text-slate-300 font-mono text-[11px] rounded">
+                  {label}: {val}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Card Footer */}
+      <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-t border-slate-800/80 pt-3">
+        <span>Height/Weight: {player.height || 'N/A'}, {player.weight ? `${player.weight} lbs` : 'N/A'}</span>
+        <span>{comparisons} comps</span>
       </div>
     </div>
   );
-}
+};
+
+export default PlayerRankingMatrix;
