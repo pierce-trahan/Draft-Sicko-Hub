@@ -4,7 +4,7 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 
 ## Status
 
-> Verified against `main`. See [`../action-plan.md`](../action-plan.md) for the finish plan.
+> **This table is the single live status.** Verified against `main`. (The old `action-plan.md` / `workflow/next-actions.md` planning docs were retired once their steps were done — git history has them.) UI work is queued separately in [`../research/ui-rd-plan.md`](../research/ui-rd-plan.md).
 
 | # | Spec | Phase | Depends on | Status |
 |---|---|---|---|---|
@@ -13,12 +13,14 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 | 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ **Landed in `main`** (PR #1) · T-1 trait content **authored** (`src/data/traitSchemas.ts`) · [review](03-review-notes.md) |
 | 04 | [Positional Usage & Projection](04-positional-usage-projection.md) | 2 | **03** | ✅ **Landed in `main`** (PR #1) · U-1 role catalog **authored** (`src/data/usageRoles.ts`) |
 | 05 | [Athletic Profile & Outlier Metric](05-athletic-profile-outlier-metric.md) | 2.5 | — (enhances 02/03/04) | ✅ **Landed in `main`** (PR #4) — nflverse-derived; athletic card + GM lean |
-| 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** ✅ (+05 ✅) | ✅ **Integrated on branch — pending merge.** Pass 2 util correct; component rewrite rejected, Claude did the surgical integration (`tsc`+build green). See [review notes](06-review-notes.md) |
+| 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** ✅ (+05 ✅) | ✅ **Landed in `main`** (PR #6) — Gemini Pass 2 util kept; its component rewrite rejected, Claude did the surgical integration (`tsc` + build green) · [review](06-review-notes.md) |
 | 07 | [Open-Source Packaging & Publish](07-open-source-packaging-publish.md) | 4 | — | 📋 **Handoff-ready for Gemini** — see the spec's "Build context" section for repo file URLs |
 | 08 | [Player-Identity Crosswalk](08-player-identity-crosswalk.md) | 3 (enabler) | — (enables full-scale **02** + **05**) | ✏️ **Drafted (design)** — the canonical `prospect_id` + cross-source ID join both 02 and 05 assume but don't design |
 | 09 | [Two-Page Player Profile](09-player-profile-restructure.md) | 5 (UI) | — (Report page: existing data; Info page: CFBD) | ✏️ **Drafted (design)** — Player Info / Scouting Report split; applies [`ui-direction.md`](../research/ui-direction.md). Report page first (existing data), Info page after CFBD |
 
-**Remaining** (both handed to Gemini to build): **06** (AI-GM simulator — deps 02 + 05 are live) then **07** (packaging, last). Each spec now carries a "Build context — repo files for the Gemini builder" section with raw URLs to every file the build needs. The manual PFR export (expands Spec 02 past the 3-GM subset) remains a parallel data-authoring task. **08** (player-ID crosswalk) is design-drafted — build it before joining Spec 02 picks to outcomes at scale or Spec 05 combine data historically.
+**Remaining build work:** **07** (packaging/publish — handoff-ready, and last by design), plus the two design-drafted specs: **08** (player-ID crosswalk — build before joining Spec 02 picks to outcomes at scale or Spec 05 combine data historically) and **09** (two-page player profile — Scouting Report page first, it runs on existing data). **10 — Scouting Atlas** is designated but not yet drafted.
+
+Every spec carries a "Build context — repo files for the Gemini builder" table; each handoff ships that table as a pasted **content bundle** (see [`../workflow/README.md`](../workflow/README.md)). The manual PFR export (expands Spec 02 past the 3-GM subset) remains a parallel data-authoring task; **CFBD wiring** gates Spec 09's Player Info page.
 
 ## Backlog
 
