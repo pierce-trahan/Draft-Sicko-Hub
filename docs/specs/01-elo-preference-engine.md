@@ -128,4 +128,3 @@ Side-by-side for the active position:
 ## 9. Out of scope for Phase 1 (don't build yet)
 
 Bradley–Terry MLE ranking; cross-position "positional value" normalization; AI-assisted matchup suggestions; sharing preference boards between users. Note them, don't build them.
-</content>

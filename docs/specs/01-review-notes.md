@@ -154,4 +154,3 @@ const defaultPositions = ['QB','RB','WR','TE','OT','IOL','EDGE','DT','LB','CB','
 - [ ] Commit writes to the real active board through `saveRankingsToStorage` and shows in the board UI without reload.
 - [ ] Trait pillars render on matchup cards; no `player.class` reference.
 - [ ] Full-backup export/import round-trips `nfl_draft_preferences`.
-</content>

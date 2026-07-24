@@ -97,4 +97,3 @@ Auto-deriving grades from combine/RAS data (future); cross-position value normal
 
 - **T-1 — Full per-position trait lists + weights.** A data-authoring task; author with the user (scouting judgment). This spec ships the *shape* + examples; the exhaustive lists are content.
 - **T-2 — Do the 5 pillars stay user-editable, or become derived** via `pillarRollup` once position traits exist? Recommend: derived-with-manual-override.
-</content>

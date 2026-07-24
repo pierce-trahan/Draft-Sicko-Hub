@@ -78,4 +78,3 @@ Pro-day data-quality normalization; predicting future athleticism; per-drill pro
 - **A-1 — RAS access.** Free cards + attribution vs. premium bulk. Default: compute percentiles from **nflverse combine (CC-BY)**; use RAS as a labeled reference/attribution, not a bulk dependency.
 - **A-2 — Historical join for GM lean.** Joining draft picks (Spec 02) to combine data by player/year needs an id/name match; handle mismatches.
 - **A-3 — Production signal choice.** Spec 03 `production` pillar vs. `overallGrade` as the outlier baseline.
-</content>

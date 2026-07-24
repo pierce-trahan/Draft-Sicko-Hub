@@ -2,7 +2,8 @@
 
 > **Phase:** 3 (optional enhancement). **Extends:** `DraftSimulator.tsx` (CPU pick logic).
 > **Owner:** Claude (design). **Builder:** Gemini 3.6 → AI Studio.
-> **Depends on:** **Spec 02** (GM tendencies). **Enhanced by:** **Spec 05** (athletic lean).
+> **Depends on:** **Spec 02** (GM tendencies) — ✅ **landed in `main`**. **Enhanced by:** **Spec 05** (athletic lean) — ✅ **landed in `main`**.
+> Both dependencies are live and ready to consume: `computeGMTendencies` exposes `roundMatrix` (position-by-round), `positionShare`, and `athleticLean`; per-pick athletic scores are in `gmPickAthletics.ts`.
 > **Reads with:** `docs/VISION.md` roadmap Phase 3.
 
 ---
@@ -63,4 +64,30 @@ Trade-proposal AI / draft-day trade tendencies; full 32-GM coverage before Spec 
 - **S-1 — Weight defaults & chaos range.** Tune so it feels real without being random.
 - **S-2 — Coverage.** Only profiled GMs behave in-character; the rest use fallback until Spec 02 scales.
 - **S-3 — Optional Gemini narration.** The existing server-side Gemini call could narrate picks; deterministic scoring stays the source of truth.
-</content>
+
+---
+
+## Build context — repo files for the Gemini builder
+
+> Gemini/AI Studio can't see the repo. Fetch these raw files and paste them into the build
+> session so the code matches real signatures and conventions. All URLs point to `main`.
+> Workflow roles: [`gemini-3.6-platform-engineer.md`](https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/workflow/gemini-3.6-platform-engineer.md) ·
+> [`sync-from-repo.md`](https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/workflow/sync-from-repo.md)
+
+**New file to create:** `src/utils/gmDraftStrategy.ts`. **File to modify:** `src/components/DraftSimulator.tsx`.
+
+| File | Why the builder needs it | Raw URL |
+|------|--------------------------|---------|
+| This spec | The build target | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/specs/06-ai-gm-simulator-behavior.md |
+| `src/components/DraftSimulator.tsx` | The file to modify — current CPU pick logic, trades, analytics, grade summary (preserve all) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/components/DraftSimulator.tsx |
+| `src/utils/gmTendencies.ts` | `computeGMTendencies` → `roundMatrix` (position-by-round bias), `positionShare`, `athleticLean` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/utils/gmTendencies.ts |
+| `src/data/gmData.ts` | `GM_PROFILES` — the profiled GMs (Roseman/Schoen/Baalke) and their picks | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/data/gmData.ts |
+| `src/data/gmPickAthletics.ts` | Per-pick athletic scores (Spec 05) for the `gmAthleticBias` term | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/data/gmPickAthletics.ts |
+| `src/utils/athleticOutlier.ts` | Athletic score/outlier helpers if biasing on prospect athleticism | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/utils/athleticOutlier.ts |
+| `src/data/teams.ts` | `NFL_TEAMS` (`Team.needs`), `SCHEMES` — the need signal and team→GM mapping | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/data/teams.ts |
+| `src/utils/traitGrading.ts` | `computePositionGrade` — a value signal alongside board rank / `overallGrade` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/utils/traitGrading.ts |
+| `src/types.ts` | `Player`, `Team`, `GMProfile`, `GMTendencies` (incl. `athleticLean`), `AthleticProfile` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/types.ts |
+| `docs/VISION.md` | Phase 3 "why" — the teaching-tool framing | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/VISION.md |
+
+**Note on GM→team mapping:** only Roseman (PHI), Schoen (NYG), and Baalke (SF/JAX) are profiled — those
+CPU teams draft in-character; every other team must fall back cleanly to the existing need+value logic.

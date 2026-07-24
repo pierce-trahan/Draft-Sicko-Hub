@@ -139,4 +139,3 @@ done independently of code.
   Spec 05.
 - **T-1 / U-1 refinement** — the trait schemas and role catalog exist and compile; revisit weights and
   role definitions with real scouting judgment when convenient (not blocking).
-</content>

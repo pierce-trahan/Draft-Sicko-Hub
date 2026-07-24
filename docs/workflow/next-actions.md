@@ -69,4 +69,3 @@ Goal: local CSV files of each GM's draft classes, to feed Spec 02's pipeline lat
 - Any product-level question Gemini raised.
 - The exported GM CSVs' shape (column names) → so Spec 02's parser targets the real format.
 - Decisions still open you want to close: **T-1** (trait lists), **U-1** (usage role catalog), **P-1** (license = MIT?), plus the low-priority ones in `VISION.md` §11.
-</content>

@@ -78,4 +78,3 @@ Similar projects — study their mechanics; none replace our approach, and licen
 - [ ] Confirm RAS attribution wording + whether we need the premium tier for bulk historical athleticism.
 - [ ] Re-verify nflverse CC-BY attribution phrasing at integration (`load_draft_picks`, `load_combine`, `load_nextgen_stats`).
 - [ ] Decide college scope — do we even need CFBD for v1, or is it Phase 4+?
-</content>

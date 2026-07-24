@@ -219,5 +219,3 @@ Domain is **bigboardlab.com** (singular "Lab"). Automated fetch is blocked (403 
 - Per-team scheme mapping → prospect scheme-fit score.
 - Mock simulator: all 257 picks vs. 32 AI GMs with team-specific needs/scheme/philosophy.
 - ~458 prospects with scouting reports; free.
-</content>
-</invoke>

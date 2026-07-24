@@ -42,4 +42,3 @@ The app builds and runs in AI Studio, the new feature works in context per its s
 ---
 
 **Current integration target:** _(fill in — e.g. "Integrate the Pairwise Elo Preference Engine built from Spec 01 into the Scouting Matrix nav slot.")_
-</content>
