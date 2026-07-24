@@ -20,6 +20,7 @@ An **athletic profile** for prospects — combine/pro-day measurables plus a pos
 - **nflverse `load_combine()`** — combine measurables by year/position. **CC-BY 4.0**, redistribution-friendly with attribution. Primary raw source.
 - **RAS (ras.football, Kent Lee Platte / "MathBomb")** — 0–10 positional athleticism since 1987. **Attribution required**; individual cards free, **bulk DB is premium**. Use as the ready-made positional score where available; otherwise compute our own percentiles from combine data.
 - **Acquisition mirrors G-1:** prepare offline, ship **derived** athletic scores/percentiles (not RAS's raw DB verbatim), attribute sources. If we compute our own positional percentiles from nflverse combine data, that's fully CC-BY-clean.
+- **Tooling (optional, build-time only):** computing positional percentiles across many years of combine data is a natural fit for **DuckDB + Parquet** in the offline script (see Spec 02 §A4b) — it stays out of the app runtime and just emits the static percentile dataset. Node/TS is fine for smaller pulls; use DuckDB only when the data size warrants it.
 
 ## 3. Data model (`src/types.ts`)
 
@@ -76,5 +77,5 @@ Pro-day data-quality normalization; predicting future athleticism; per-drill pro
 ## 8. Open items
 
 - **A-1 — RAS access.** Free cards + attribution vs. premium bulk. Default: compute percentiles from **nflverse combine (CC-BY)**; use RAS as a labeled reference/attribution, not a bulk dependency.
-- **A-2 — Historical join for GM lean.** Joining draft picks (Spec 02) to combine data by player/year needs an id/name match; handle mismatches.
+- **A-2 — Historical join for GM lean.** Joining draft picks (Spec 02) to combine data by player/year needs an id/name match; handle mismatches. **Design lives in [Spec 08 — Player-Identity Crosswalk](08-player-identity-crosswalk.md):** join on `prospect_id` through a shared provider ID, never on names. Build 08 before doing this join at scale.
 - **A-3 — Production signal choice.** Spec 03 `production` pillar vs. `overallGrade` as the outlier baseline.

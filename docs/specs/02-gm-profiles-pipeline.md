@@ -55,6 +55,10 @@ For each `(pfr_code, year)` in the target range:
 
 Ship a **static dataset** in `src/data/` (e.g. `gmData.ts` exporting typed arrays, or a generated `gmData.json` imported there). **Ship the canonical raw records — GM tenures + attributed picks — and compute tendency aggregates in-app** (Part B), so we can refine metrics without re-scraping.
 
+### A4b. Tooling (optional, build-time only)
+
+For the small subset (a few hundred CSV rows), plain TS/Node parsing is fine — no extra tooling needed. **At scale** (joining nflverse picks across full history, or counting formation usage from season-long play-by-play), **DuckDB + Parquet** is a good fit for the *offline derivation script* — it queries large PBP files efficiently and emits the small static JSON the app ships. **Strictly build-time:** it never enters the app runtime, which stays local-first and reads only the shipped static dataset (VISION §8). Node/TS remains a valid alternative; pick DuckDB only when the query size actually warrants it. Same option applies to Spec 05's percentile computation.
+
 ### A5. Edge cases (handle or document)
 
 - **Non-"General Manager" titles.** Some teams/eras list "Executive VP of Football Ops," "Director of Player Personnel," or no GM (historically, e.g. NE under Belichick had no traditional GM). Capture the listed decision-maker + title; where truly absent, mark `gm: null` / "de facto: <coach/exec>". **The v1 subset should deliberately pick teams with a clean `General Manager` field** to validate the happy path first.
@@ -170,4 +174,5 @@ Reach/value vs. consensus; historical archetype/trait lean; trade-tendency analy
 - **G-1 — Acquisition / ToS.** ✅ **Decided:** hybrid, no live scraping — user manually exports PFR CSVs for the subset; nflverse for picks + PFR/Wikipedia for GM-by-year at scale; ship derived aggregates with attribution. (Verify CSV-export availability in tools search.)
 - **G-2 — Subset choice.** ✅ **Decided:** Howie Roseman (PHI, elite), Joe Schoen (NYG, mid), Trent Baalke (SF→JAX, boom-bust). See §A6.
 - **G-3 — Tweener handling.** ✅ **Decided:** ambiguous tweeners map to a first-class **`FLEX`** bucket (not a forced EDGE/LB binary). The richer "avenues of usage + predictive best-scheme/formation-spot" breakdown is a **separate future spec** (Positional Usage & Projection), tied to the Phase 2 trait model — not built here.
+- **G-4 — At-scale identity join.** Scaling past the 3-GM subset (picks → career outcomes, and nflverse-sourced picks) requires joining players across sources **without keying on names**. Design lives in [Spec 08 — Player-Identity Crosswalk](08-player-identity-crosswalk.md): join on a canonical `prospect_id` through a shared provider ID. The subset (manual CSV, small, spot-checkable) doesn't strictly need it; the 32-team history does. Build 08 first when scaling.
 - **#5 — Refresh cadence.** One-time vs. re-run yearly after each draft.

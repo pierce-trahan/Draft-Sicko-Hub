@@ -15,12 +15,13 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 | 05 | [Athletic Profile & Outlier Metric](05-athletic-profile-outlier-metric.md) | 2.5 | — (enhances 02/03/04) | ✅ **Landed in `main`** (PR #4) — nflverse-derived; athletic card + GM lean |
 | 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** ✅ (+05 ✅) | 📋 **Handoff-ready for Gemini** — deps landed; see the spec's "Build context" section for repo file URLs |
 | 07 | [Open-Source Packaging & Publish](07-open-source-packaging-publish.md) | 4 | — | 📋 **Handoff-ready for Gemini** — see the spec's "Build context" section for repo file URLs |
+| 08 | [Player-Identity Crosswalk](08-player-identity-crosswalk.md) | 3 (enabler) | — (enables full-scale **02** + **05**) | ✏️ **Drafted (design)** — the canonical `prospect_id` + cross-source ID join both 02 and 05 assume but don't design |
 
-**Remaining** (both handed to Gemini to build): **06** (AI-GM simulator — deps 02 + 05 are live) then **07** (packaging, last). Each spec now carries a "Build context — repo files for the Gemini builder" section with raw URLs to every file the build needs. The manual PFR export (expands Spec 02 past the 3-GM subset) remains a parallel data-authoring task.
+**Remaining** (both handed to Gemini to build): **06** (AI-GM simulator — deps 02 + 05 are live) then **07** (packaging, last). Each spec now carries a "Build context — repo files for the Gemini builder" section with raw URLs to every file the build needs. The manual PFR export (expands Spec 02 past the 3-GM subset) remains a parallel data-authoring task. **08** (player-ID crosswalk) is design-drafted — build it before joining Spec 02 picks to outcomes at scale or Spec 05 combine data historically.
 
 ## Backlog
 
-All roadmap specs are now drafted. New specs get added here as scope emerges.
+Roadmap specs 01–07 are drafted; **08** (player-identity crosswalk) added as a foundational enabler for the at-scale joins. New specs get added here as scope emerges.
 
 ## Content-authoring tasks (not code specs, but needed)
 

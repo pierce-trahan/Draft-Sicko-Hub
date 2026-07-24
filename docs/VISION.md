@@ -206,6 +206,8 @@ Track unresolved calls here so they don't get lost between sessions.
 | G-1 | GM acquisition / PFR ToS | ✅ **Decided** | Hybrid, no live scraping: manual CSV export (subset) + nflverse (scale); ship derived aggregates + attribution (Spec 02) |
 | G-2 | GM subset choice (which 2–3 GMs) | ✅ **Decided** | Roseman (elite), Schoen (mid), Baalke (boom-bust) — Spec 02 §A6 |
 | G-3 | Tweener position handling | ✅ **Decided** | First-class `FLEX` bucket; rich usage-projection is a separate future spec (Spec 02) |
+| G-4 | At-scale player-identity join | ✅ **Decided** | Canonical `prospect_id` + cross-source ID crosswalk (Spec 08); join on IDs, never names — build before scaling 02/05 |
+| D-1 | FTN charting data in v1 | ✅ **Decided** | **Out of v1** — FTN is CC-BY-SA; use nflverse `load_participation()` (CC-BY) for personnel/formation to keep one clean license (data-sources.md §1) |
 
 ---
 
