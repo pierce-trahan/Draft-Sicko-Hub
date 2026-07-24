@@ -23,6 +23,8 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 
 Roadmap specs 01–07 are drafted; **08** (player-identity crosswalk) added as a foundational enabler for the at-scale joins. New specs get added here as scope emerges.
 
+**Where an idea goes:** if it's *in-scope for the Hub*, it becomes a spec here. If it's a *separate product* or blocked on data/tech the Hub can't assume, it goes to [`../future-tools.md`](../future-tools.md) instead — so parked ideas don't creep into the build (VISION §3).
+
 ## Content-authoring tasks (not code specs, but needed)
 
 These are scouting-judgment data tasks to do *with the user*, referenced by the specs above:

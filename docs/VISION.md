@@ -179,7 +179,7 @@ Ordered to lock the spine before adding surface area.
 **Phase 4 — Polish & publish** → [`docs/specs/07`](specs/07-open-source-packaging-publish.md)
 - [ ] License, data attributions, run-with/without-AI, self-host docs; AI Studio publish path.
 
-*(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in.)*
+*(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in. It and other deliberately-separate ideas are parked in [`docs/future-tools.md`](future-tools.md) with their blockers and integration seams.)*
 
 **Full spec index + build order:** [`docs/specs/README.md`](specs/README.md).
 
