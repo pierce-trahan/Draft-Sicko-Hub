@@ -1,6 +1,7 @@
 # UI Direction — Editorial Scouting Workstation
 
 > **Status:** v1 direction (from the ChatGPT UI R&D session, July 2026). Anchors how we move the UI off its current "vibe-coded SaaS" look. Feeds the player-profile restructure (Spec 09) and the future Scouting Atlas signature. **Not a full visual spec** — it's the standing direction + the rules for borrowing UI ethically.
+> **Companion:** [`ui-rd-plan.md`](ui-rd-plan.md) — the page-by-page R&D queue (what we explore next, and how each session runs). This doc holds what's *decided*; that one holds what's *next*.
 > **Decided with the user:** keep **emerald** as the single accent (the R&D mockups used orange — not adopted); Scouting Atlas is the one signature interaction, staged later; two-page player profile confirmed (Spec 09). (VISION §11 D-3.)
 
 ---
