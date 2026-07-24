@@ -61,4 +61,29 @@ Hosted/multi-user backend; accounts/auth; telemetry; a packaged desktop app; aut
 - **P-1 — License choice.** MIT (recommended) vs. other. User confirms.
 - **P-2 — Static-only build?** Offer a no-server static bundle (AI disabled) in addition to the full server build, or rely solely on graceful degradation.
 - **P-3 — Data redistribution final check.** Confirm CFBD terms and RAS attribution wording before shipping any of their derived data publicly (from `docs/research/data-sources.md` §8).
-</content>
+
+---
+
+## Build context — repo files for the Gemini builder
+
+> Gemini/AI Studio can't see the repo. Fetch these raw files and paste them into the build
+> session. All URLs point to `main`. Workflow roles:
+> [`gemini-3.6-platform-engineer.md`](https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/workflow/gemini-3.6-platform-engineer.md) ·
+> [`sync-from-repo.md`](https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/workflow/sync-from-repo.md)
+
+**Files to create:** root `LICENSE`, `ATTRIBUTIONS.md`, light `CONTRIBUTING.md`, an in-app "Data & Credits" view.
+**Files to verify/modify:** `README.md`, `.env.example`, `server.ts` (graceful no-key path).
+
+| File | Why the builder needs it | Raw URL |
+|------|--------------------------|---------|
+| This spec | The build target | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/specs/07-open-source-packaging-publish.md |
+| `server.ts` | Express + server-side Gemini call; already has `FALLBACK_MEDIA_QUOTES` + a no-key guard (`apiKey === "MY_GEMINI_API_KEY"`) — the graceful-degradation baseline to preserve/extend | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/server.ts |
+| `README.md` | Verify install → dev → build → start, env setup, self-host notes, license/attribution links | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/README.md |
+| `.env.example` | Confirm it documents `GEMINI_API_KEY` and that the app runs without it | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/.env.example |
+| `package.json` | Scripts: `dev` (tsx), `build` (vite + esbuild → dist/server.cjs), `start` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/package.json |
+| `src/components/CitedSources.tsx` | Pattern to reuse for the in-app "Data & Credits" view | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/components/CitedSources.tsx |
+| `docs/research/data-sources.md` | Attribution specifics — nflverse (CC-BY 4.0), PFR, RAS, CFBD, and the §8 redistribution checks | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/research/data-sources.md |
+| `docs/VISION.md` | §1 positioning + §3 tenets (open-source, local-first, no-paywall) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/VISION.md |
+
+**Attribution already shipping in-app:** the athletic profile card and GM panel (Spec 05) credit nflverse
+(CC-BY 4.0); the packaging work should consolidate all such credits into the Data & Credits view + `ATTRIBUTIONS.md`.

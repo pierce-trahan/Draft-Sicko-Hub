@@ -171,4 +171,3 @@ Reach/value vs. consensus; historical archetype/trait lean; trade-tendency analy
 - **G-2 — Subset choice.** ✅ **Decided:** Howie Roseman (PHI, elite), Joe Schoen (NYG, mid), Trent Baalke (SF→JAX, boom-bust). See §A6.
 - **G-3 — Tweener handling.** ✅ **Decided:** ambiguous tweeners map to a first-class **`FLEX`** bucket (not a forced EDGE/LB binary). The richer "avenues of usage + predictive best-scheme/formation-spot" breakdown is a **separate future spec** (Positional Usage & Projection), tied to the Phase 2 trait model — not built here.
 - **#5 — Refresh cadence.** One-time vs. re-run yearly after each draft.
-</content>

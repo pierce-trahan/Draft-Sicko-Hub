@@ -43,4 +43,3 @@ Three roles, one pipeline. Each role has a lane; work flows left to right, and p
 
 - Sync the AI Studio app-build env from the repo (re-run after each spec lands) → [`sync-from-repo.md`](sync-from-repo.md)
 - Desk/next-actions checklist → [`next-actions.md`](next-actions.md)
-</content>
