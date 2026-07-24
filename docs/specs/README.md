@@ -13,7 +13,7 @@ Build specs, ordered by dependency. Each is precise enough for the Platform Engi
 | 03 | [Position-Aware Trait Model](03-position-aware-trait-model.md) | 2 | — | ✅ **Landed in `main`** (PR #1) · T-1 trait content **authored** (`src/data/traitSchemas.ts`) · [review](03-review-notes.md) |
 | 04 | [Positional Usage & Projection](04-positional-usage-projection.md) | 2 | **03** | ✅ **Landed in `main`** (PR #1) · U-1 role catalog **authored** (`src/data/usageRoles.ts`) |
 | 05 | [Athletic Profile & Outlier Metric](05-athletic-profile-outlier-metric.md) | 2.5 | — (enhances 02/03/04) | ✅ **Landed in `main`** (PR #4) — nflverse-derived; athletic card + GM lean |
-| 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** ✅ (+05 ✅) | 📋 **Handoff-ready for Gemini** — deps landed; see the spec's "Build context" section for repo file URLs |
+| 06 | [AI-GM Simulator Behavior](06-ai-gm-simulator-behavior.md) | 3 (optional) | **02** ✅ (+05 ✅) | 🔧 **Pass 1 rejected → Pass 2 pending** — util ~80% good; component was a blind full-file rewrite. Fix list + paste-ready Pass 2 handoff in [review notes](06-review-notes.md) |
 | 07 | [Open-Source Packaging & Publish](07-open-source-packaging-publish.md) | 4 | — | 📋 **Handoff-ready for Gemini** — see the spec's "Build context" section for repo file URLs |
 | 08 | [Player-Identity Crosswalk](08-player-identity-crosswalk.md) | 3 (enabler) | — (enables full-scale **02** + **05**) | ✏️ **Drafted (design)** — the canonical `prospect_id` + cross-source ID join both 02 and 05 assume but don't design |
 

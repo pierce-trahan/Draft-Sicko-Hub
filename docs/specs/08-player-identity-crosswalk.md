@@ -81,3 +81,23 @@ Populating `collegeId` / the full college→NFL join (future thread — needs CF
 - **X-1 — nflverse ID-map exact fields.** Confirm the precise column names/coverage of the current nflverse players/ID dataset at build time (field names drift across releases). Pin the dataset version in the provenance manifest (Spec 07).
 - **X-2 — Fuzzy-review surface.** Decide the lightest confirmation surface for `'review'` rows (a generated CSV the user checks off is enough for the subset; no app UI needed).
 - **X-3 — CFBD college-ID timing.** Populate `collegeId` only once CFBD redistribution terms are confirmed (data-sources §8) and the college→NFL thread is actually scoped.
+
+---
+
+## Build context — repo files for the Gemini builder
+
+> Per the **Engineering Handoff URL Rule** (workflow README / root `CLAUDE.md`): every file is a raw URL so the builder reads the real thing, never reconstructs it. URLs point to `main` — they resolve once this branch merges; before merge, swap `main` → the feature branch.
+
+**New file to create:** `src/data/playerIds.ts` (or a generated `playerIds.json`) + a `PlayerIdMap` type in `src/types.ts`. **Offline script:** `scripts/buildPlayerIds.*` (build-time; ships static). **Files to verify/join against:** `src/data/gmData.ts`, the Spec 05 combine data.
+
+| File | Why the builder needs it | Raw URL |
+|------|--------------------------|---------|
+| This spec | The build target | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/specs/08-player-identity-crosswalk.md |
+| `src/types.ts` | Add `PlayerIdMap`; see existing `GMDraftPick`/`Player` shapes to join against | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/types.ts |
+| `src/data/gmData.ts` | Spec 02 picks that must resolve to `prospect_id` (has `playerName`, `year`, `teamId`) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/data/gmData.ts |
+| `src/data/gmPickAthletics.ts` | Spec 05 combine join keyed `playerName|year` — the identity join this spec cleans up | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/data/gmPickAthletics.ts |
+| `src/utils/gmTendencies.ts` | Shows how picks + athletics are currently joined (by name) — what to migrate to `prospect_id` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/utils/gmTendencies.ts |
+| `docs/research/data-sources.md` | nflverse players/ID map (CC-BY), CFBD terms, attribution + §8 checks | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/research/data-sources.md |
+| `docs/VISION.md` | §8 data architecture — offline-then-static discipline | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/VISION.md |
+| Spec 02 | Consumer at scale (the at-scale join this enables) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/specs/02-gm-profiles-pipeline.md |
+| Spec 05 | Consumer (combine/athletic historical join) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/specs/05-athletic-profile-outlier-metric.md |

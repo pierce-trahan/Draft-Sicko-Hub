@@ -26,6 +26,18 @@ Three roles, one pipeline. Each role has a lane; work flows left to right, and p
 3. **Integrate & ship (AI Studio app build).** The implementation engineer wires the tested pieces into the product inside AI Studio, handles environment/config (`GEMINI_API_KEY`), and gets it to a runnable/publishable state. Integration problems go *back* to the platform engineer.
 4. **Review (Claude).** Claude audits the result against the spec and the design tenets, and either accepts or writes the next spec / fix note.
 
+## 🔴 The Engineering Handoff URL Rule (non-negotiable)
+
+**Every communication sent to the engineering environment must list the individual raw GitHub URL for every repo doc or file it references.** A spec handed to Gemini, a correction/Pass-N prompt, a sync task for the AI Studio app-build env, a review note pasted over — all of them.
+
+Gemini/AI Studio can't see the repo; named a file without a fetchable URL, it **reconstructs the file from memory** — the #1 failure mode (Spec 06 Pass 1 rebuilt the real 2,240-line `DraftSimulator.tsx` as a 715-line stub, deleting trades/analytics/grades/user-pick UI). Compliance:
+
+1. Every build-bound spec carries a **"Build context — repo files for the Gemini builder"** table (one raw URL per file). No table → not ready to hand off.
+2. Every ad-hoc handoff prompt ends with the same raw-URL list for every file it names.
+3. URL form: `https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/<ref>/<path>` — must **resolve at send time** (`main` for merged docs, the feature branch for unmerged). Unpushed file → push it first; never let the engineer predict it.
+
+The complement lives in the engineer's own instructions ("if you can't see a file you're told to modify, STOP and ask — don't reconstruct it"). This rule makes sure they never *have* to ask. See root [`CLAUDE.md`](../../CLAUDE.md).
+
 ## Non-negotiables every role inherits (from `docs/VISION.md`)
 
 - **`docs/VISION.md` is the source of truth.** If code and vision disagree, one gets fixed on purpose — no silent drift.
