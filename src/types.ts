@@ -50,6 +50,7 @@ export interface Player {
   // back to the owning 5-pillar value (see src/utils/traitGrading.ts).
   positionTraits?: Record<string, number>;
   usageProjection?: UsageProjection;
+  athleticProfile?: AthleticProfile; // Spec 05: optional athletic measurables & outlier metric
 }
 
 // ==========================================
@@ -81,6 +82,32 @@ export interface PreferenceState {
     history: PreferenceComparison[];
     updatedAt: number;
   };
+}
+
+// ==========================================
+// Spec 05 — Athletic Profile & Outlier Metric
+// ==========================================
+
+export interface AthleticMeasurables {
+  heightIn?: number;
+  weightLb?: number;
+  armIn?: number;
+  handIn?: number;
+  forty?: number;
+  tenSplit?: number;
+  twentyShuttle?: number;
+  threeCone?: number;
+  vertical?: number;
+  broad?: number;
+  bench?: number;
+}
+
+export interface AthleticProfile {
+  measurables?: AthleticMeasurables;
+  percentiles?: Record<string, number>;   // per-metric, 0..100 vs position group
+  athleticScore?: number;                  // 0..10 composite (RAS-style)
+  source?: 'ras' | 'nflverse' | 'computed' | 'manual';
+  outlierDelta?: number;                   // normalizedAthletic(0..99) minus production signal
 }
 
 export interface Team {
@@ -162,4 +189,11 @@ export interface GMTendencies {
   r1LeanText: string; // Top R1 positions by frequency, e.g. "DT (3), QB (2)"
   earlyRoundPriorities: { position: string; count: number; percentage: number }[];
   topColleges: { college: string; count: number }[];
+  // Spec 05 — athletic lean of this GM's picks (from nflverse-derived combine scores).
+  athleticLean?: {
+    avgScore: number;     // mean RAS-style athletic score (0..10) of matched picks
+    elitePct: number;     // % of matched picks scoring >= 8.0
+    matchedCount: number; // picks with a combine athletic score
+    totalCount: number;   // total picks in the current filter
+  };
 }

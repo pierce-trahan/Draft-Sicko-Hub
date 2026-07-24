@@ -158,6 +158,41 @@ export default function GMProfiles() {
             ))}
           </div>
         </div>
+
+        {/* Spec 05 — Athletic Lean (derived from nflverse combine) */}
+        {tendencies.athleticLean && (
+          <div className="pt-2">
+            <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2 flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-emerald-500" />
+              Athletic Lean of Drafted Players
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-slate-900 p-3 rounded border border-slate-800/80">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block">Avg Athletic Score</span>
+                <span className="text-2xl font-black font-mono text-emerald-400">
+                  {tendencies.athleticLean.avgScore.toFixed(1)}
+                  <span className="text-xs text-slate-500 font-bold"> / 10</span>
+                </span>
+              </div>
+              <div className="bg-slate-900 p-3 rounded border border-slate-800/80">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block">Elite Athletes (≥8.0)</span>
+                <span className="text-2xl font-black font-mono text-slate-100">
+                  {tendencies.athleticLean.elitePct}%
+                </span>
+              </div>
+              <div className="bg-slate-900 p-3 rounded border border-slate-800/80">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block">Combine-Matched Picks</span>
+                <span className="text-2xl font-black font-mono text-slate-100">
+                  {tendencies.athleticLean.matchedCount}
+                  <span className="text-xs text-slate-500 font-bold"> / {tendencies.athleticLean.totalCount}</span>
+                </span>
+              </div>
+            </div>
+            <p className="text-[10px] font-mono text-slate-500 mt-2">
+              RAS-style composite (size + movement percentiles vs. position) averaged over picks joined to combine data · via nflverse (CC-BY 4.0).
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="bg-slate-950 border border-slate-800 p-5 rounded-xl space-y-4">

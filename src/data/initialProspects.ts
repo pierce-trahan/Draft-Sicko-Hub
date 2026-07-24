@@ -1,4 +1,23 @@
-import { Player } from '../types';
+import { Player, AthleticMeasurables } from '../types';
+
+// Spec 05 — seeded combine measurables for a representative subset of prospects
+// (scout-entered / illustrative). Percentiles + athletic score + outlier band are
+// computed live from these via src/utils/athleticOutlier.ts against nflverse-derived
+// baselines. Absent players simply show no athletic card until measurables are added.
+const ATHLETIC_SEEDS: Record<string, AthleticMeasurables> = {
+  'jeremiah-smith':    { heightIn: 75, weightLb: 215, forty: 4.38, tenSplit: 1.52, vertical: 38.5, broad: 131, threeCone: 6.85, twentyShuttle: 4.15, bench: 15, armIn: 32.5, handIn: 9.8 },
+  'cam-coleman':       { heightIn: 75, weightLb: 195, forty: 4.42, tenSplit: 1.54, vertical: 37, broad: 128, threeCone: 6.95, twentyShuttle: 4.2, armIn: 32.75, handIn: 9.5 },
+  'colin-simmons':     { heightIn: 75, weightLb: 235, forty: 4.51, vertical: 35.5, broad: 128, threeCone: 6.95, twentyShuttle: 4.28, bench: 21, armIn: 33.5, handIn: 10 },
+  'dylan-stewart':     { heightIn: 78, weightLb: 248, forty: 4.58, vertical: 36, broad: 129, threeCone: 7.0, twentyShuttle: 4.3, bench: 24, armIn: 34.5, handIn: 10.2 },
+  'ellis-robinson-iv': { heightIn: 72, weightLb: 185, forty: 4.4, tenSplit: 1.51, vertical: 37, broad: 128, threeCone: 6.7, twentyShuttle: 4.05, armIn: 31.5, handIn: 9.3 },
+  'sammy-brown':       { heightIn: 74, weightLb: 235, forty: 4.56, vertical: 36.5, broad: 126, threeCone: 7.0, twentyShuttle: 4.3, bench: 24 },
+  'jordan-seaton':     { heightIn: 77, weightLb: 310, forty: 5.12, vertical: 29, broad: 106, threeCone: 7.65, twentyShuttle: 4.65, bench: 26, armIn: 34, handIn: 10.5 },
+  'arch-manning':      { heightIn: 76, weightLb: 225, forty: 4.72, vertical: 31, broad: 114, armIn: 31, handIn: 9.5 },
+  'omarion-miller':    { heightIn: 74, weightLb: 195, forty: 4.35, tenSplit: 1.49, vertical: 40, broad: 134, threeCone: 6.75, twentyShuttle: 4.05, bench: 14, armIn: 33, handIn: 9.6 },
+  'mario-craver':      { heightIn: 70, weightLb: 170, forty: 4.32, tenSplit: 1.48, vertical: 39, broad: 132, threeCone: 6.8, twentyShuttle: 4.1 },
+};
+
+
 
 const COMPACT_PLAYERS: string[] = [
   "jeremiah-smith|Jeremiah Smith|WR|Ohio State|6'3\"|215|Jr|99|Blue Chip Prospect",
@@ -465,7 +484,10 @@ const hydratedPlayers: Player[] = COMPACT_PLAYERS.map((line, idx) => {
     bigBoards: {}, // Hydrated dynamically below
     overallGrade,
     archetype,
-    gradeHistory: generateInitialGradeHistory(id, overallGrade, position, archetype)
+    gradeHistory: generateInitialGradeHistory(id, overallGrade, position, archetype),
+    ...(ATHLETIC_SEEDS[id]
+      ? { athleticProfile: { measurables: ATHLETIC_SEEDS[id], source: 'manual' as const } }
+      : {})
   };
 });
 

@@ -39,6 +39,11 @@ import {
   getWeightBadgeInfo,
 } from '../utils/traitGrading';
 import { computeUsageProjection, setPrimaryUsageRole } from '../utils/usageProjection';
+import {
+  computeAthleticProfile,
+  computeOutlier,
+  ATHLETIC_METRICS,
+} from '../utils/athleticOutlier';
 
 interface PlayerProfileModalProps {
   player: Player;
@@ -1014,6 +1019,101 @@ export default function PlayerProfileModal({
                 })}
               </div>
             </div>
+          </div>
+
+          {/* Section 2C: SPEC 05 Athletic Profile & Outlier Metric */}
+          <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl p-5 md:p-6 space-y-4">
+            <h3 className="text-base font-semibold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-2">
+              <Zap className="w-4 h-4 text-emerald-500" />
+              Athletic Profile & Outlier Metric
+            </h3>
+            {(() => {
+              const measurables = editedPlayer.athleticProfile?.measurables;
+              if (!measurables || Object.keys(measurables).length === 0) {
+                return (
+                  <div className="text-xs font-mono text-slate-500 text-center py-6">
+                    No combine measurables recorded for this prospect.
+                  </div>
+                );
+              }
+              const profile = computeAthleticProfile(editedPlayer.position, measurables);
+              const outlier = computeOutlier({ ...editedPlayer, athleticProfile: profile });
+              const bandClass =
+                outlier.band === 'athletic_outlier'
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                  : outlier.band === 'producer'
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                  : 'bg-slate-700/20 text-slate-300 border-slate-700/50';
+              return (
+                <div className="space-y-4">
+                  {/* Composite score + outlier band banner */}
+                  <div className="bg-slate-950 border border-slate-800 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="text-center">
+                        <span className="block text-[9px] font-mono uppercase text-slate-400 tracking-wider">
+                          Athletic Score
+                        </span>
+                        <span className="text-3xl font-black font-mono text-emerald-400">
+                          {profile?.athleticScore != null ? profile.athleticScore.toFixed(1) : '—'}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-500">/ 10 (RAS-style)</span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className={`px-2.5 py-1 text-[11px] font-bold font-mono border rounded uppercase tracking-wider ${bandClass}`}>
+                          {outlier.label}
+                        </span>
+                        {outlier.delta != null && (
+                          <div className="text-[10px] font-mono text-slate-400">
+                            athletic {outlier.normalizedAthletic} vs. production {outlier.productionSignal}{' '}
+                            <span className={outlier.delta >= 0 ? 'text-amber-400' : 'text-emerald-400'}>
+                              (Δ {outlier.delta >= 0 ? '+' : ''}{outlier.delta})
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-slate-400 max-w-sm md:text-right">{outlier.rationale}</p>
+                  </div>
+
+                  {/* Per-metric measurables + positional percentiles */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {ATHLETIC_METRICS.map((m) => {
+                      const val = measurables[m.key];
+                      if (typeof val !== 'number') return null;
+                      const pct = profile?.percentiles?.[m.key];
+                      const barColor =
+                        pct == null ? 'bg-slate-700'
+                          : pct >= 80 ? 'bg-emerald-500'
+                          : pct >= 50 ? 'bg-slate-500'
+                          : 'bg-rose-500/70';
+                      return (
+                        <div key={m.key} className="bg-slate-950 border border-slate-800/80 rounded p-2.5 space-y-1">
+                          <div className="flex justify-between items-center text-xs font-mono">
+                            <span className="text-slate-300">{m.label}</span>
+                            <span className="text-slate-100 font-bold">
+                              {val}{m.unit}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-slate-800 rounded overflow-hidden">
+                              <div className={`h-full ${barColor}`} style={{ width: `${pct ?? 0}%` }} />
+                            </div>
+                            <span className="text-[10px] font-mono text-slate-400 w-12 text-right">
+                              {pct != null ? `${pct}%ile` : 'n/a'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <p className="text-[10px] font-mono text-slate-500 pt-1">
+                    Percentiles vs. {editedPlayer.position} position group · outlier = athletic score (0–99) − production signal ·
+                    baselines derived from combine data via <span className="text-slate-400">nflverse (CC-BY 4.0)</span>.
+                  </p>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Section 3: Scouting Report & Strengths/Weaknesses */}
