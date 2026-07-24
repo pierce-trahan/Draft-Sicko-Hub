@@ -33,6 +33,20 @@ Each entry states: **what it is**, **why it's parked** (the real blocker or the 
 - **Trigger:** interest after the Hub ships; a decision that the pattern is worth generalizing.
 - **Integration seam:** none expected — a separate product sharing methodology and possibly shared tooling, not data.
 
+## 4. Film terminal + JPEG-annotate module
+
+- **What it is:** the film-workspace direction from the UI R&D — a player's clips with snap markers, a draw layer, and film notes linked to data. A lighter **v1**: let users **upload JPEGs (frames/screens) and draw on them** (routes, alignments, notes); full **video** handling is a later v2.
+- **Why it's parked:** video is heavy to host/handle for a local-first give-it-away app, and the film-linked *concept/telemetry* data (see §5) isn't citably available. The UI R&D deliberately removed film from the near-term designs; the profile area it occupied is now the two-page profile (Spec 09).
+- **Trigger:** the Hub is stable and there's appetite for a v2 media module; start with JPEG-annotate (no video infra needed).
+- **Integration seam:** a profile tab / module slot; annotations are user data that joins the local-first export/import.
+
+## 5. Playbook Grid / All-22 / route telemetry (concept & tracking analytics)
+
+- **What it is:** the most cinematic UI R&D mockups — EPA/success **by concept and situation** (the "Playbook Grid"), All-22 views, route diagrams, and snap-level telemetry.
+- **Why it's parked (data wall, same as route trees):** these run on **college snap-charting / tracking / concept data that isn't freely or citably available** — PFF/tracking-tier, and public college tracking doesn't exist. Building the UI would mean empty panels or **uncited numbers**, which the project refuses (`ui-direction.md` §5). This is the same blocker as the CV route-tool (§1).
+- **Trigger:** a genuinely open, citable college concept-data source appears, **or** the CV tracking project (§1) can generate it.
+- **Integration seam:** player-profile tabs / the Scouting Report; ships only when the data behind it is real and attributable.
+
 ---
 
 ## Adding to this list
