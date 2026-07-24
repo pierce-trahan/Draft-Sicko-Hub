@@ -6,6 +6,8 @@ export interface PlayerTraits {
   sizeAndFrame: number;
 }
 
+export type Pillar = keyof PlayerTraits;
+
 export interface BigBoardInfo {
   rank: number;
   comment: string;
@@ -43,6 +45,11 @@ export interface Player {
   gradeHistory?: GradeHistoryPoint[];
   labels?: string[];
   photoUrl?: string;
+  // Spec 03 — Position-Aware Trait System.
+  // Optional map of position sub-trait key -> 50..99 score. Absent keys fall
+  // back to the owning 5-pillar value (see src/utils/traitGrading.ts).
+  positionTraits?: Record<string, number>;
+  usageProjection?: UsageProjection;
 }
 
 export interface Team {
@@ -64,4 +71,64 @@ export interface Scheme {
   type: 'offense' | 'defense';
   description: string;
   favoredPositions: string[];
+}
+
+
+// ===== Spec 02/04 additive types (merged from deliverable) =====
+export interface UsageRole {
+  id: string;
+  label: string; // e.g. 'Stand-up 3-4 OLB rusher'
+  scheme?: string; // Scheme.id matching SCHEMES ('34defense', 'zoneblock', etc.)
+  formationSpot?: string; // e.g. 'EDGE (wide-9)' / 'SLOT' / 'BOX safety'
+  fitScore: number; // 0..99, from trait x scheme/role weighting
+  rationale: string; // trait-grounded 'why'
+  isPrimary?: boolean;
+}
+
+export interface UsageProjection {
+  roles: UsageRole[]; // ranked by fitScore desc
+  primaryRoleId: string;
+  computedAt: number;
+  userEdited?: boolean; // true once the user overrides
+}
+
+export interface GMDraftPick {
+  year: number;
+  round: number;
+  overallPick: number;
+  playerName: string;
+  position: string; // Normalized app position group (QB, RB, WR, TE, OT, IOL, EDGE, DT, LB, CB, S, FLEX)
+  rawPosition?: string; // Raw PFR position string
+  college: string;
+  teamId: string; // App Team.id, e.g. 'PHI', 'NYG', 'SF', 'JAX'
+  careerAV?: number;
+}
+
+export interface GMTenure {
+  teamId: string;
+  startYear: number;
+  endYear: number | null; // null = active GM
+}
+
+export interface GMProfile {
+  id: string; // slug, e.g. 'howie-roseman'
+  name: string;
+  title?: string;
+  tenures: GMTenure[];
+  picks: GMDraftPick[];
+}
+
+export interface GMTendencies {
+  totalPicks: number;
+  positionCounts: Record<string, number>;
+  positionShare: Record<string, number>; // Percentage 0..100
+  draftCapitalByPos: Record<string, number>; // Total Jimmy Johnson points invested per position
+  roundMatrix: {
+    round1: Record<string, number>;
+    day2: Record<string, number>; // Rounds 2-3
+    day3: Record<string, number>; // Rounds 4-7
+  };
+  r1LeanText: string; // Top R1 positions by frequency, e.g. "DT (3), QB (2)"
+  earlyRoundPriorities: { position: string; count: number; percentage: number }[];
+  topColleges: { college: string; count: number }[];
 }
