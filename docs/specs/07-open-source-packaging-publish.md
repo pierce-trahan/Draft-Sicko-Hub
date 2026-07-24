@@ -72,7 +72,7 @@ Hosted/multi-user backend; accounts/auth; telemetry; a packaged desktop app; aut
 > [`sync-from-repo.md`](https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/workflow/sync-from-repo.md)
 
 **Files to create:** root `LICENSE`, `ATTRIBUTIONS.md`, light `CONTRIBUTING.md`, an in-app "Data & Credits" view.
-**Files to verify/modify:** `README.md`, `.env.example`, `server.ts` (graceful no-key path).
+**Files to verify/modify:** `README.md`, `.env.example`, `server.ts` (graceful no-key path), `src/App.tsx` (mount the Data & Credits view in the nav).
 
 | File | Why the builder needs it | Raw URL |
 |------|--------------------------|---------|
@@ -82,6 +82,7 @@ Hosted/multi-user backend; accounts/auth; telemetry; a packaged desktop app; aut
 | `.env.example` | Confirm it documents `GEMINI_API_KEY` and that the app runs without it | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/.env.example |
 | `package.json` | Scripts: `dev` (tsx), `build` (vite + esbuild → dist/server.cjs), `start` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/package.json |
 | `src/components/CitedSources.tsx` | Pattern to reuse for the in-app "Data & Credits" view | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/components/CitedSources.tsx |
+| `src/App.tsx` | Where the nav (`appMode`) + views are mounted — add the "Data & Credits" nav entry/view here, following the existing button/view pattern | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/App.tsx |
 | `docs/research/data-sources.md` | Attribution specifics — nflverse (CC-BY 4.0), PFR, RAS, CFBD, and the §8 redistribution checks | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/research/data-sources.md |
 | `docs/VISION.md` | §1 positioning + §3 tenets (open-source, local-first, no-paywall) | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/VISION.md |
 
