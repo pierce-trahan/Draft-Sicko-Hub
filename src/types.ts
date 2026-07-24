@@ -23,6 +23,34 @@ export interface GradeHistoryPoint {
   milestone: string;
 }
 
+// ==========================================
+// Spec 09 — Two-Page Player Profile (Info / Scouting Report)
+// ==========================================
+
+export interface RecruitingStage {
+  stage: 'hs' | 'transfer';   // high-school entry, or a transfer move
+  fromSchool?: string;
+  toSchool?: string;
+  year?: number;
+  stars?: number;             // 0..5
+  compositeRating?: number;   // e.g. 0.9800
+  source?: string;            // 'CFBD' | 'manual' | ...
+}
+
+export interface CareerHonor {
+  label: string;              // 'First-Team All-SEC' | 'CFP National Champion'
+  year?: number;
+  level?: 'national' | 'conference' | 'team' | 'other';
+  source?: string;
+}
+
+export interface SourceConfidence {
+  source: string;             // 'College Data API (CFBD)' | 'nflverse' | 'manual' | ...
+  confidence: 'high' | 'med' | 'low';
+  lastUpdated?: string;
+  note?: string;
+}
+
 export interface Player {
   id: string;
   name: string;
@@ -51,6 +79,10 @@ export interface Player {
   positionTraits?: Record<string, number>;
   usageProjection?: UsageProjection;
   athleticProfile?: AthleticProfile; // Spec 05: optional athletic measurables & outlier metric
+  // Spec 09 — Two-Page Player Profile additive fields
+  recruiting?: RecruitingStage[];                     // NEW — HS + transfer valuation journey
+  honors?: CareerHonor[];                             // NEW — awards + team accolades
+  sourceConfidence?: Record<string, SourceConfidence>; // NEW — per-section provenance, keyed by section id
 }
 
 // ==========================================
