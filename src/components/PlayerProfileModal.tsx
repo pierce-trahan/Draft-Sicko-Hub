@@ -3,7 +3,7 @@ import { Player, Team, UsageProjection, BigBoardInfo } from '../types';
 import { NFL_TEAMS, SCHEMES } from '../data/teams';
 import RadarChart from './RadarChart';
 import TrendLineChart from './TrendLineChart';
-import { getDraftRange } from './PlayerRankingMatrix';
+import { getDraftRange } from '../utils/draftValue';
 import { getPlayerPhotoUrl, getCollegeColors } from '../utils/playerPhotos';
 import {
   X,
