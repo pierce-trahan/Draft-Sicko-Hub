@@ -56,4 +56,5 @@ The complement lives in the engineer's own instructions ("if you can't see a fil
 ## Runbooks
 
 - Sync the AI Studio app-build env from the repo (re-run after each spec lands) → [`sync-from-repo.md`](sync-from-repo.md)
-- Desk/next-actions checklist → [`next-actions.md`](next-actions.md)
+- Live build status + what's next → [`../specs/README.md`](../specs/README.md) (the single status table)
+- UI R&D queue (one module per session) → [`../research/ui-rd-plan.md`](../research/ui-rd-plan.md)
