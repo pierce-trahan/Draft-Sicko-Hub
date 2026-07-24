@@ -36,6 +36,8 @@ Gemini/AI Studio can't see the repo; named a file without a fetchable URL, it **
 2. Every ad-hoc handoff prompt ends with the same raw-URL list for every file it names.
 3. URL form: `https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/<ref>/<path>` — must **resolve at send time** (`main` for merged docs, the feature branch for unmerged). Unpushed file → push it first; never let the engineer predict it.
 
+**Single source — the spec's Build-context table.** The URLs for a build handoff live in **one** place: that spec's "Build context — repo files for the Gemini builder" table. The per-session handoff message just **names the spec and gives its raw URL**; the engineer instructions direct the builder to open that spec and fetch its table. We do **not** maintain a separate per-session instructions doc, and there is **no "current task" line to keep updated** — that split is exactly what let URLs land somewhere the builder was never told to look. Point it at the table; keep the table complete.
+
 The complement lives in the engineer's own instructions ("if you can't see a file you're told to modify, STOP and ask — don't reconstruct it"). This rule makes sure they never *have* to ask. See root [`CLAUDE.md`](../../CLAUDE.md).
 
 ## Non-negotiables every role inherits (from `docs/VISION.md`)
