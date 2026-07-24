@@ -183,6 +183,11 @@ Ordered to lock the spine before adding surface area.
 **Phase 4 — Polish & publish** → [`docs/specs/07`](specs/07-open-source-packaging-publish.md)
 - [ ] License, data attributions, run-with/without-AI, self-host docs; AI Studio publish path.
 
+**Phase 5 — UI direction (editorial scouting workstation)** → [`docs/research/ui-direction.md`](research/ui-direction.md)
+- [ ] Move the UI off its vibe-coded look via the four structural moves + visible provenance; keep **emerald** (D-3).
+- [ ] **Two-page player profile** (Player Info / Scouting Report) → [`docs/specs/09`](specs/09-player-profile-restructure.md) — Scouting Report first (existing data), Player Info after CFBD wiring.
+- [ ] **Scouting Atlas** — the one signature interaction (spatial class map). Designated, staged as `docs/specs/10` (not yet drafted).
+
 *(A separate "beginner on-ramp" product is out of scope for this repo — noted so it doesn't creep in. It and other deliberately-separate ideas are parked in [`docs/future-tools.md`](future-tools.md) with their blockers and integration seams.)*
 
 **Full spec index + build order:** [`docs/specs/README.md`](specs/README.md).
@@ -213,6 +218,7 @@ Track unresolved calls here so they don't get lost between sessions.
 | G-4 | At-scale player-identity join | ✅ **Decided** | Canonical `prospect_id` + cross-source ID crosswalk (Spec 08); join on IDs, never names — build before scaling 02/05 |
 | D-1 | FTN charting data in v1 | ✅ **Decided** | **Out of v1** — FTN is CC-BY-SA; use nflverse `load_participation()` (CC-BY) for personnel/formation to keep one clean license (data-sources.md §1) |
 | D-2 | Nudge GM metrics to match public narrative? | ✅ **Decided — No** | Never tune weights/metrics to reproduce a media/fan narrative. Ship the unbiased trend; where it contradicts consensus, that's the lesson. Baalke: measured athletic lean is weak (~5.7); the real signal is a defensive-trench positional bias (§7; Spec 02 §A6; Spec 06 review S-5) |
+| D-3 | UI direction + accent color | ✅ **Decided** | Editorial scouting workstation (terminal density, provenance-forward), keep **emerald** as the single accent (R&D orange not adopted); Scouting Atlas = the one signature (staged, Spec 10); two-page player profile (Spec 09). See [`ui-direction.md`](research/ui-direction.md) |
 
 ---
 
