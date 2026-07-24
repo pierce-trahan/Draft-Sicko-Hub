@@ -36,7 +36,7 @@ Gemini reproduced `DraftSimulator.tsx` as a whole new file. The real file is **2
 
 **F-4 — Make athletic bias data-derived; drop the per-GM `if`-ladder.** Pass 1 hardcodes `if (gmProfile.id === 'trent-baalke') … else if ('howie-roseman') …`. This contradicts the spec's data-derived thesis and **doesn't generalize** — when Spec 02 scales past the 3-GM subset, no other GM gets athletic character. Use `computeGMTendencies(...).athleticLean` (already returns `avgScore`, `elitePct`) as the bias *magnitude*, applied to the prospect's athletic signal. No GM slugs in the scoring.
 
-**F-5 — Athletic term can't discriminate; normalize relative to the pool.** Prospect `traits.athleticism` clusters 90–99 at the top of the board, so `athleticism/99*100` ≈ a near-constant ~95–100 for everyone, and the rationale threshold `athleticism >= 85` fires on nearly every pick. Use a **pool-relative** signal (percentile or z-score of the candidate vs. the available pool), not an absolute `/99`. (Note: prospects currently carry only `athleticProfile.measurables` — no computed `athleticScore`/`percentiles` — so a clean Spec 05 prospect-side signal isn't wired yet; decide per **S-4** below.)
+**F-5 — Athletic term can't discriminate; normalize relative to the pool.** Prospect `traits.athleticism` clusters 90–99 at the top of the board, so `athleticism/99*100` ≈ a near-constant ~95–100 for everyone, and the rationale threshold `athleticism >= 85` fires on nearly every pick. Use a **pool-relative** signal — the candidate's **percentile of `traits.athleticism` vs. the available pool** (0..1) — not an absolute `/99`. Combine with F-4: `gmAthleticBias = poolPercentile(prospect) × athleticLeanStrength(gm)`, where `athleticLeanStrength` scales from `tendencies.athleticLean.elitePct`/`avgScore` (0 when a GM has no athletic lean or no `athleticLean` data). (**S-4 DECIDED — option (a):** bias on pool-relative `traits.athleticism` this pass — no new data. Prospects currently carry only `athleticProfile.measurables`; populating `athleticProfile.athleticScore`/`percentiles` per Spec 05 and biasing on *that* is a small later follow-up, not this pass.)
 
 **F-6 — Keep the fallback as smart as it was.** The pre-existing non-GM heuristic added scheme-fit (`+4` when `SCHEMES` favors the position) and positional-premium weighting (QB/EDGE/OT/CB/WR). Pass 1's fallback is only `value*0.55 + need*0.45` — so all 29 non-profiled teams got *dumber* than today. Restore scheme-fit + premium in the fallback path.
 
@@ -50,13 +50,13 @@ Gemini reproduced `DraftSimulator.tsx` as a whole new file. The real file is **2
 
 ## Open decisions for the user (before Pass 2)
 
-- **S-4 — Athletic signal source.** Two options for F-5: **(a)** defer — bias on **pool-relative `traits.athleticism`** this pass (no new data), or **(b)** do it properly now — populate prospect `athleticProfile.athleticScore`/`percentiles` per Spec 05 and bias on that. Recommend **(a)** for Pass 2 (unblocks Spec 06), **(b)** as a small follow-up. *User to confirm.*
+- **S-4 — Athletic signal source. ✅ DECIDED — (a):** bias on **pool-relative `traits.athleticism`** this pass (no new data); unblocks Spec 06. Option (b) — populate prospect `athleticProfile.athleticScore`/`percentiles` per Spec 05 and bias on that — is a small later follow-up, not Pass 2.
 
 ## Definition of done (Pass 2)
 
 - [ ] `DraftSimulator.tsx` changed **only** in `simulateNextPick`, `simulateInstantDraft`, the setup UI (slider + indicator), and the draft-log row (rationale). Every other feature — trades, export, analytics, grades, user-pick UI — byte-for-byte preserved.
 - [ ] `npm run lint` (`tsc --noEmit`) + `npm run build` green; no unused imports.
-- [ ] Athletic bias derived from `athleticLean`, pool-relative, no GM slugs in scoring.
+- [ ] Athletic bias = pool-relative `traits.athleticism` percentile × `athleticLean` strength (S-4a); no GM slugs in scoring.
 - [ ] Fallback keeps scheme-fit + positional-premium.
 - [ ] `computeGMTendencies` computed once per pick, not per candidate.
 - [ ] Manual check: a Baalke-controlled team visibly skews vs. a Roseman-controlled team across a few R1–R3 runs.
@@ -80,7 +80,7 @@ Gemini reproduced `DraftSimulator.tsx` as a whole new file. The real file is **2
 | `src/types.ts` | `Player`, `PlayerTraits`, `Team`, `GMProfile`, `GMTendencies`, `AthleticProfile` | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/src/types.ts |
 | `docs/VISION.md` | Phase 3 "why" — tendencies become behavior | https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/main/docs/VISION.md |
 
-**Paste-ready Pass 2 brief (fill the blank, keep the URLs):**
+**Paste-ready Pass 2 brief.** URLs below are the **feature-branch** ref (`claude/audit-chatgpt-spec-response-8rw2f7`) so they resolve for a **pre-merge hand-off** — which is how this one goes out. After this branch merges, the `main` URLs in the table above are the canonical record.
 
 ```
 TASK — Spec 06 AI-GM Simulator, PASS 2 (corrections). Your Pass 1 was reviewed; see the
@@ -96,23 +96,29 @@ HARD REQUIREMENT: EDIT src/components/DraftSimulator.tsx SURGICALLY. Change ONLY
 Everything else in that file — trade desk, export modal, analytics, grade modal, user-pick
 UI, AI commentary — must be preserved byte-for-byte.
 
-Also apply util fixes F-4 through F-9 from the review notes (data-derived athletic bias,
-pool-relative normalization, keep scheme-fit+premium in fallback, hoist computeGMTendencies).
+Also apply util fixes F-4 through F-9 from the review notes:
+  - F-4: athletic bias is DATA-DERIVED from tendencies.athleticLean — no per-GM-id if-ladder.
+  - F-5 (S-4 decision = a): athletic signal is the candidate's PERCENTILE of traits.athleticism
+    vs. the available pool (0..1), times an athleticLean strength (0 when the GM has no lean).
+    Do NOT normalize as athleticism/99. Do NOT populate athleticProfile.athleticScore this pass.
+  - F-6: keep scheme-fit (+SCHEMES) and positional-premium (QB/EDGE/OT/CB/WR) in the fallback path.
+  - F-7: compute computeGMTendencies ONCE per team-on-clock, not per candidate.
+  - F-8/F-9: normalize gmPosBias to a share (not raw count*35); tune chaos so mid-slider varies sanely.
 Carry forward your Pass 1 gmDraftStrategy.ts (paste it back in) and correct it — do NOT reuse
 your Pass 1 DraftSimulator.tsx.
 
 Read these (raw URLs — read, don't predict):
-- 06-review-notes.md   → [paste URL from the table above]
-- 06 spec              → [paste URL]
-- DraftSimulator.tsx   → [paste URL]   (EDIT this real file)
-- gmTendencies.ts      → [paste URL]
-- gmData.ts            → [paste URL]
-- gmPickAthletics.ts   → [paste URL]
-- athleticOutlier.ts   → [paste URL]
-- teams.ts             → [paste URL]
-- types.ts             → [paste URL]
-- VISION.md            → [paste URL]
+- 06-review-notes.md   https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/docs/specs/06-review-notes.md
+- 06 spec              https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/docs/specs/06-ai-gm-simulator-behavior.md
+- DraftSimulator.tsx   https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/components/DraftSimulator.tsx   (EDIT this real file)
+- gmTendencies.ts      https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/utils/gmTendencies.ts
+- gmData.ts            https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/data/gmData.ts
+- gmPickAthletics.ts   https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/data/gmPickAthletics.ts
+- athleticOutlier.ts   https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/utils/athleticOutlier.ts
+- teams.ts             https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/data/teams.ts
+- types.ts             https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/src/types.ts
+- VISION.md            https://raw.githubusercontent.com/pierce-trahan/Draft-Sicko-Hub/claude/audit-chatgpt-spec-response-8rw2f7/docs/VISION.md
 
-Athletic-signal decision (S-4): [fill in — (a) pool-relative traits.athleticism this pass, or
-(b) populate athleticProfile.athleticScore first].
+If any URL doesn't load (e.g. private repo), tell me and I'll paste the file — do not proceed
+on a reconstructed version.
 ```
